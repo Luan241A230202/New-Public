@@ -2,9 +2,9 @@
                         TÀI LIỆU API - NEW PUBLIC PLATFORM
 ==================================================================================
 
-Phiên bản: 1.0
+Phiên bản: 1.1
 Ngày cập nhật: 2026-02-09
-Tổng số API Endpoints: 250+
+Tổng số API Endpoints: 270+
 
 ==================================================================================
                             HƯỚNG DẪN SỬ DỤNG
@@ -410,6 +410,21 @@ Tổng số API Endpoints: 250+
     Chức năng: Báo cáo comment vi phạm
     Xác thực: Auth Required
     Body: { commentId: string, reason: string }
+
+58. /api/comments/[id]/super-thanks
+    Method: POST
+    Chức năng: Gửi Super Thanks (tặng sao) cho bình luận
+    Xác thực: Auth Required
+    Body: { stars: number (1-100), anonymous?: boolean }
+    Response: { success: boolean, comment: {...}, transactionId: string }
+    Features:
+      - Tặng từ 1-100 sao cho người bình luận
+      - Tùy chọn gửi ẩn danh
+      - Tự động tính toán tier (Bronze, Silver, Gold, Platinum, Diamond)
+      - TOP SUPPORTER badge cho người tặng >50 sao
+      - Trao XP cho cả người gửi và người nhận
+      - Cập nhật số dư Stars tự động
+      - Hiệu ứng đặc biệt: shimmer, sparkle, glow, spinning star, pulse
 
 ┌──────────────────────────────────────────────────────────────────────────────┐
 │                     MODULE: COMMUNITY - CỘNG ĐỒNG                            │
