@@ -1,0 +1,1498 @@
+==================================================================================
+                        TÀI LIỆU API - NEW PUBLIC PLATFORM
+==================================================================================
+
+Phiên bản: 1.0
+Ngày cập nhật: 2026-02-09
+Tổng số API Endpoints: 250+
+
+==================================================================================
+                            HƯỚNG DẪN SỬ DỤNG
+==================================================================================
+
+1. XÁC THỰC (Authentication):
+   - Auth Required: Yêu cầu session/token từ NextAuth
+   - Admin Only: Chỉ admin mới được phép truy cập
+   - Public: Không yêu cầu xác thực
+   - API Key: Yêu cầu API key trong header X-API-Key
+
+2. CÁC MÃ TRẠNG THÁI THƯỜNG GẶP:
+   - 200: Thành công
+   - 201: Tạo mới thành công
+   - 400: Dữ liệu đầu vào không hợp lệ
+   - 401: Chưa xác thực
+   - 403: Không có quyền truy cập
+   - 404: Không tìm thấy
+   - 409: Xung đột (duplicate)
+   - 429: Vượt quá giới hạn rate limit
+   - 500: Lỗi server
+
+==================================================================================
+                            DANH SÁCH API ENDPOINTS
+==================================================================================
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                        MODULE: ADMIN - QUẢN TRỊ HỆ THỐNG                     │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+1. /api/admin/site-config
+   Method: POST
+   Chức năng: Cập nhật cấu hình site (tên, logo, theme, v.v.)
+   Xác thực: Admin Only
+   Body: { key: string, value: any }
+
+2. /api/admin/api-keys
+   Method: GET, POST, DELETE
+   Chức năng: Quản lý API keys cho external services
+   Xác thực: Admin Only
+   Body (POST): { name: string, scopes: string[] }
+
+3. /api/admin/api-sources
+   Method: GET, POST, PATCH, DELETE
+   Chức năng: Quản lý nguồn API bên ngoài cho sync videos
+   Xác thực: Admin Only
+   Body: { url: string, apiKey: string, type: string }
+
+4. /api/admin/api-sources/sync
+   Method: POST
+   Chức năng: Kích hoạt đồng bộ từ API source
+   Xác thực: Admin Only
+   Body: { sourceId: string }
+
+5. /api/admin/boost/orders
+   Method: GET
+   Chức năng: Lấy danh sách đơn hàng boost video
+   Xác thực: Admin Only
+   Query: page, perPage, status, userId
+
+6. /api/admin/boost/plans
+   Method: GET, POST, PATCH, DELETE
+   Chức năng: Quản lý các gói boost video
+   Xác thực: Admin Only
+   Body: { name: string, durationDays: number, priceStars: number }
+
+7. /api/admin/gifts
+   Method: GET, POST, PATCH, DELETE
+   Chức năng: Quản lý quà tặng trong hệ thống
+   Xác thực: Admin Only
+   Body: { name: string, starCost: number, icon: string }
+
+8. /api/admin/payments/bundles
+   Method: GET, POST, PATCH, DELETE
+   Chức năng: Quản lý gói mua Stars
+   Xác thực: Admin Only
+   Body: { stars: number, price: number, currency: string }
+
+9. /api/admin/payments/config
+   Method: GET, POST
+   Chức năng: Cấu hình payment gateway
+   Xác thực: Admin Only
+   Body: { provider: string, apiKey: string, webhookSecret: string }
+
+10. /api/admin/payments/coupons
+    Method: GET, POST
+    Chức năng: Quản lý mã giảm giá
+    Xác thực: Admin Only
+    Body: { code: string, discount: number, expiresAt: string }
+
+11. /api/admin/payments/coupons/[id]
+    Method: PATCH, DELETE
+    Chức năng: Cập nhật/xóa coupon cụ thể
+    Xác thực: Admin Only
+
+12. /api/admin/payments/dashboard
+    Method: GET
+    Chức năng: Thống kê dashboard thanh toán
+    Xác thực: Admin Only
+    Response: { revenue, transactions, topUsers }
+
+13. /api/admin/payments/deposits/assign-user
+    Method: POST
+    Chức năng: Gán deposit cho user
+    Xác thực: Admin Only
+    Body: { depositId: string, userId: string }
+
+14. /api/admin/payments/deposits/manual-credit
+    Method: POST
+    Chức năng: Nạp Stars thủ công cho user
+    Xác thực: Admin Only
+    Body: { userId: string, stars: number, note: string }
+
+15. /api/admin/payments/deposits/reconcile
+    Method: POST
+    Chức năng: Đối soát các giao dịch deposit
+    Xác thực: Admin Only
+
+16. /api/admin/payments/deposits/refund
+    Method: POST
+    Chức năng: Hoàn tiền cho deposit
+    Xác thực: Admin Only
+    Body: { depositId: string, reason: string }
+
+17. /api/admin/payments/export/deposits
+    Method: GET
+    Chức năng: Export danh sách deposits ra CSV
+    Xác thực: Admin Only
+    Query: startDate, endDate, format
+
+18. /api/admin/payments/export/events
+    Method: GET
+    Chức năng: Export payment events
+    Xác thực: Admin Only
+
+19. /api/admin/payments/export/webhooks
+    Method: GET
+    Chức năng: Export webhook logs
+    Xác thực: Admin Only
+
+20. /api/admin/payments/fraud/alerts
+    Method: GET
+    Chức năng: Danh sách cảnh báo gian lận
+    Xác thực: Admin Only
+
+21. /api/admin/payments/fraud/alerts/ack
+    Method: POST
+    Chức năng: Xác nhận đã xem alert
+    Xác thực: Admin Only
+    Body: { alertId: string }
+
+22. /api/admin/payments/fraud/alerts/resolve
+    Method: POST
+    Chức năng: Giải quyết alert gian lận
+    Xác thực: Admin Only
+    Body: { alertId: string, action: string }
+
+23. /api/admin/payments/secrets
+    Method: GET, POST
+    Chức năng: Quản lý payment secrets
+    Xác thực: Admin Only
+
+24. /api/admin/reports
+    Method: GET
+    Chức năng: Danh sách báo cáo vi phạm
+    Xác thực: Admin Only
+    Query: status, type, page, perPage
+
+25. /api/admin/reports/comments
+    Method: GET
+    Chức năng: Báo cáo comments vi phạm
+    Xác thực: Admin Only
+
+26. /api/admin/star-transactions
+    Method: GET
+    Chức năng: Lịch sử giao dịch Stars
+    Xác thực: Admin Only
+    Query: userId, type, startDate, endDate
+
+27. /api/admin/stars-adjust
+    Method: POST
+    Chức năng: Điều chỉnh số Stars của user
+    Xác thực: Admin Only
+    Body: { userId: string, delta: number, note: string }
+
+28. /api/admin/stars/export/ledger
+    Method: GET
+    Chức năng: Export sổ cái Stars
+    Xác thực: Admin Only
+
+29. /api/admin/theme-presets
+    Method: GET, POST, DELETE
+    Chức năng: Quản lý theme presets
+    Xác thực: Admin Only
+    Body: { name: string, colors: object }
+
+30. /api/admin/videos/delete
+    Method: POST
+    Chức năng: Xóa video
+    Xác thực: Admin Only
+    Body: { videoId: string }
+
+31. /api/admin/videos/hide
+    Method: POST
+    Chức năng: Ẩn/hiện video
+    Xác thực: Admin Only
+    Body: { videoId: string, hidden: boolean }
+
+32. /api/admin/videos/publish
+    Method: POST
+    Chức năng: Publish video
+    Xác thực: Admin Only
+    Body: { videoId: string }
+
+33. /api/admin/videos/requeue
+    Method: POST
+    Chức năng: Đưa video vào hàng đợi xử lý lại
+    Xác thực: Admin Only
+    Body: { videoId: string }
+
+34. /api/admin/videos/update-metadata
+    Method: POST
+    Chức năng: Cập nhật metadata video
+    Xác thực: Admin Only
+    Body: { videoId: string, title: string, description: string }
+
+35. /api/admin/ad-placement
+    Method: GET, POST, PATCH, DELETE
+    Chức năng: Quản lý vị trí đặt quảng cáo
+    Xác thực: Admin Only
+
+36. /api/admin/hls-config
+    Method: GET, POST
+    Chức năng: Cấu hình HLS streaming
+    Xác thực: Admin Only
+
+37. /api/admin/moderation/actions
+    Method: GET
+    Chức năng: Lịch sử hành động kiểm duyệt
+    Xác thực: Admin Only
+
+38. /api/admin/moderation/ai/queue
+    Method: GET
+    Chức năng: Hàng đợi kiểm duyệt AI
+    Xác thực: Admin Only
+
+39. /api/admin/moderation/ai/[id]/decision
+    Method: POST
+    Chức năng: Quyết định kiểm duyệt AI
+    Xác thực: Admin Only
+    Body: { action: "APPROVE" | "REJECT", reason: string }
+
+40. /api/admin/moderation/ai/status
+    Method: GET
+    Chức năng: Trạng thái hệ thống kiểm duyệt AI
+    Xác thực: Admin Only
+
+41. /api/admin/nft/contracts
+    Method: GET, POST
+    Chức năng: Quản lý NFT smart contracts
+    Xác thực: Admin Only
+
+42. /api/admin/storage/config
+    Method: GET, POST
+    Chức năng: Cấu hình storage backend
+    Xác thực: Admin Only
+
+43. /api/admin/storage/drive/verify
+    Method: POST
+    Chức năng: Verify Google Drive connection
+    Xác thực: Admin Only
+
+44. /api/admin/storage/ftp/test-upload
+    Method: POST
+    Chức năng: Test FTP upload
+    Xác thực: Admin Only
+
+45. /api/admin/storage/ftp/verify
+    Method: POST
+    Chức năng: Verify FTP connection
+    Xác thực: Admin Only
+
+46. /api/admin/subtitles/request
+    Method: POST
+    Chức năng: Yêu cầu tạo phụ đề tự động
+    Xác thực: Admin Only
+    Body: { videoId: string, language: string }
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                         MODULE: ADS - QUẢN LÝ QUẢNG CÁO                      │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+47. /api/ads
+    Method: GET
+    Chức năng: Lấy quảng cáo để hiển thị
+    Xác thực: Public
+    Query: placement, videoId
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                      MODULE: ANALYTICS - PHÂN TÍCH DỮ LIỆU                   │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+48. /api/analytics/events
+    Method: POST
+    Chức năng: Ghi nhận sự kiện analytics
+    Xác thực: Public
+    Body: { event: string, properties: object }
+
+49. /api/analytics/realtime
+    Method: GET
+    Chức năng: Số người xem realtime
+    Xác thực: Public
+    Query: videoId
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                         MODULE: AUTH - XÁC THỰC                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+50. /api/auth/[...nextauth]
+    Method: GET, POST
+    Chức năng: NextAuth endpoints (signin, signout, callback)
+    Xác thực: Public
+    Note: Sử dụng NextAuth.js
+
+51. /api/auth/register
+    Method: POST
+    Chức năng: Đăng ký tài khoản mới
+    Xác thực: Public
+    Body: { email: string, password: string, username: string }
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                    MODULE: BOOST - BOOST VIDEO                               │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+52. /api/boost/plans
+    Method: GET
+    Chức năng: Lấy danh sách gói boost
+    Xác thực: Auth Required
+    Response: [{ id, name, durationDays, priceStars }]
+
+53. /api/boost/start
+    Method: POST
+    Chức năng: Bắt đầu boost video
+    Xác thực: Auth Required
+    Rate Limit: 6 requests/minute
+    Body: { planId: string, videoId: string }
+
+54. /api/boost/cancel
+    Method: POST
+    Chức năng: Hủy boost đang chạy
+    Xác thực: Auth Required
+    Body: { orderId: string }
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: COMMENTS - BÌNH LUẬN                             │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+55. /api/comments
+    Method: GET, POST
+    Chức năng: Lấy/tạo bình luận
+    Xác thực: GET=Public, POST=Auth Required
+    Body (POST): { videoId: string, content: string, parentId?: string }
+    Query (GET): videoId, page, perPage
+
+56. /api/comments/moderate
+    Method: POST
+    Chức năng: Kiểm duyệt comment
+    Xác thực: Auth Required (Creator only)
+    Body: { commentId: string, action: "APPROVE" | "HIDE" }
+
+57. /api/comments/report
+    Method: POST
+    Chức năng: Báo cáo comment vi phạm
+    Xác thực: Auth Required
+    Body: { commentId: string, reason: string }
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: COMMUNITY - CỘNG ĐỒNG                            │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+58. /api/community/posts
+    Method: GET, POST
+    Chức năng: Bài viết cộng đồng
+    Xác thực: GET=Public, POST=Auth Required
+    Body (POST): { title: string, content: string, tags: string[] }
+
+59. /api/community/polls/vote
+    Method: POST
+    Chức năng: Bỏ phiếu trong poll
+    Xác thực: Auth Required
+    Body: { pollId: string, optionId: string }
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: CREATOR - NHÀ SÁNG TẠO                           │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+60. /api/creator/tip
+    Method: POST
+    Chức năng: Tip Stars cho creator
+    Xác thực: Auth Required
+    Body: { creatorId: string, stars: number, message?: string }
+
+61. /api/creator/membership/join
+    Method: POST
+    Chức năng: Tham gia membership của creator
+    Xác thực: Auth Required
+    Body: { creatorId: string, planId: string }
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: CREATORS - DANH SÁCH CREATORS                    │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+62. /api/creators/[id]/membership/plans
+    Method: GET, POST
+    Chức năng: Các gói membership của creator
+    Xác thực: GET=Public, POST=Auth Required (Creator)
+
+63. /api/creators/[id]/membership/join
+    Method: POST
+    Chức năng: Join membership plan
+    Xác thực: Auth Required
+    Body: { planId: string }
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: EXTERNAL - API BÊN NGOÀI                         │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+64. /api/external/auth/login
+    Method: POST, OPTIONS
+    Chức năng: Đăng nhập qua external API
+    Xác thực: API Key
+    Body: { email: string, password: string }
+
+65. /api/external/auth/register
+    Method: POST, OPTIONS
+    Chức năng: Đăng ký qua external API
+    Xác thực: API Key
+    Body: { email, password, username }
+
+66. /api/external/auth/logout
+    Method: POST, OPTIONS
+    Chức năng: Đăng xuất
+    Xác thực: API Key + Auth Token
+
+67. /api/external/auth/me
+    Method: GET, OPTIONS
+    Chức năng: Thông tin user hiện tại
+    Xác thực: API Key + Auth Token
+
+68. /api/external/ads
+    Method: GET, OPTIONS
+    Chức năng: Lấy quảng cáo
+    Xác thực: API Key
+
+69. /api/external/analytics/top
+    Method: GET, OPTIONS
+    Chức năng: Top videos analytics
+    Xác thực: API Key
+
+70. /api/external/analytics/content
+    Method: GET, OPTIONS
+    Chức năng: Content analytics
+    Xác thực: API Key
+
+71. /api/external/boost/plans
+    Method: GET, OPTIONS
+    Chức năng: Danh sách boost plans
+    Xác thực: API Key
+
+72. /api/external/boost/targets
+    Method: GET, OPTIONS
+    Chức năng: Boost targets
+    Xác thực: API Key
+
+73. /api/external/boost/metrics
+    Method: GET, OPTIONS
+    Chức năng: Boost metrics
+    Xác thực: API Key
+
+74. /api/external/creator-stats/summary
+    Method: GET, OPTIONS
+    Chức năng: Tóm tắt thống kê creator
+    Xác thực: API Key + Auth Token
+
+75. /api/external/creator-stats/revenue
+    Method: GET, OPTIONS
+    Chức năng: Doanh thu creator
+    Xác thực: API Key + Auth Token
+
+76. /api/external/creator-stats/top-fans
+    Method: GET, OPTIONS
+    Chức năng: Top fans của creator
+    Xác thực: API Key + Auth Token
+
+77. /api/external/live/streams
+    Method: GET, POST, OPTIONS
+    Chức năng: Danh sách/tạo live streams
+    Xác thực: API Key
+
+78. /api/external/live/streams/[id]
+    Method: GET, PATCH, DELETE, OPTIONS
+    Chức năng: Thông tin/cập nhật/xóa stream
+    Xác thực: API Key
+
+79. /api/external/live/streams/[id]/start
+    Method: POST, OPTIONS
+    Chức năng: Bắt đầu live stream
+    Xác thực: API Key
+
+80. /api/external/live/streams/[id]/stop
+    Method: POST, OPTIONS
+    Chức năng: Dừng live stream
+    Xác thực: API Key
+
+81. /api/external/live/streams/[id]/chat
+    Method: GET, POST, OPTIONS
+    Chức năng: Chat trong live stream
+    Xác thực: API Key
+
+82. /api/external/live/streams/[id]/reactions
+    Method: POST, OPTIONS
+    Chức năng: Reactions trong live
+    Xác thực: API Key
+
+83. /api/external/live/streams/[id]/viewer-stats
+    Method: GET, OPTIONS
+    Chức năng: Thống kê người xem
+    Xác thực: API Key
+
+84. /api/external/live/streams/[id]/moderation/ban
+    Method: POST, OPTIONS
+    Chức năng: Ban user trong chat
+    Xác thực: API Key
+
+85. /api/external/live/streams/[id]/moderation/timeout
+    Method: POST, OPTIONS
+    Chức năng: Timeout user
+    Xác thực: API Key
+
+86. /api/external/live/streams/[id]/moderation/unban
+    Method: POST, OPTIONS
+    Chức năng: Unban user
+    Xác thực: API Key
+
+87. /api/external/live/schedules
+    Method: GET, POST, OPTIONS
+    Chức năng: Lịch live stream
+    Xác thực: API Key
+
+88. /api/external/live/schedules/[id]
+    Method: GET, PATCH, DELETE, OPTIONS
+    Chức năng: Chi tiết lịch live
+    Xác thực: API Key
+
+89. /api/external/live/ingest/config
+    Method: GET, OPTIONS
+    Chức năng: Cấu hình ingest cho live
+    Xác thực: API Key
+
+90. /api/external/live/ingest/status
+    Method: GET, OPTIONS
+    Chức năng: Trạng thái ingest
+    Xác thực: API Key
+
+91. /api/external/me/notifications
+    Method: GET, OPTIONS
+    Chức năng: Thông báo của user
+    Xác thực: API Key + Auth Token
+
+92. /api/external/me/watch-later
+    Method: GET, POST, DELETE, OPTIONS
+    Chức năng: Danh sách xem sau
+    Xác thực: API Key + Auth Token
+
+93. /api/external/nft/listings/create
+    Method: POST, OPTIONS
+    Chức năng: Tạo NFT listing
+    Xác thực: API Key + Auth Token
+
+94. /api/external/nft/listings/buy
+    Method: POST, OPTIONS
+    Chức năng: Mua NFT
+    Xác thực: API Key + Auth Token
+
+95. /api/external/nft/listings/cancel
+    Method: POST, OPTIONS
+    Chức năng: Hủy listing
+    Xác thực: API Key + Auth Token
+
+96. /api/external/payouts/methods
+    Method: GET, POST, OPTIONS
+    Chức năng: Phương thức payout
+    Xác thực: API Key + Auth Token
+
+97. /api/external/payouts/request
+    Method: POST, OPTIONS
+    Chức năng: Yêu cầu payout
+    Xác thực: API Key + Auth Token
+
+98. /api/external/payouts/[id]
+    Method: GET, OPTIONS
+    Chức năng: Chi tiết payout
+    Xác thực: API Key + Auth Token
+
+99. /api/external/public/videos
+    Method: GET, OPTIONS
+    Chức năng: Danh sách video public
+    Xác thực: Public
+
+100. /api/external/public/videos/[id]
+     Method: GET, OPTIONS
+     Chức năng: Chi tiết video
+     Xác thực: Public
+
+101. /api/external/public/search
+     Method: GET, OPTIONS
+     Chức năng: Tìm kiếm
+     Xác thực: Public
+
+102. /api/external/public/trending
+     Method: GET, OPTIONS
+     Chức năng: Videos trending
+     Xác thực: Public
+
+103. /api/external/referrals/me
+     Method: GET, OPTIONS
+     Chức năng: Thông tin referral
+     Xác thực: API Key + Auth Token
+
+104. /api/external/referrals/claim
+     Method: POST, OPTIONS
+     Chức năng: Claim phần thưởng referral
+     Xác thực: API Key + Auth Token
+
+105. /api/external/stars/topup/intent
+     Method: POST, OPTIONS
+     Chức năng: Tạo intent nạp Stars
+     Xác thực: API Key + Auth Token
+
+106. /api/external/stars/topup/history
+     Method: GET, OPTIONS
+     Chức năng: Lịch sử nạp Stars
+     Xác thực: API Key + Auth Token
+
+107. /api/external/videos/[id]/view
+     Method: POST, OPTIONS
+     Chức năng: Ghi nhận view video
+     Xác thực: API Key
+
+108. /api/external/wallet-scan/ledger
+     Method: GET, OPTIONS
+     Chức năng: Ledger của wallet
+     Xác thực: API Key
+
+109. /api/external/wallet-scan/assets
+     Method: GET, OPTIONS
+     Chức năng: Tài sản trong wallet
+     Xác thực: API Key
+
+110. /api/external/wallet-scan/wallets
+     Method: GET, OPTIONS
+     Chức năng: Danh sách wallets
+     Xác thực: API Key
+
+111. /api/external/wallet-scan/nfts
+     Method: GET, OPTIONS
+     Chức năng: NFTs trong wallet
+     Xác thực: API Key
+
+112. /api/external/wallet-scan/nft-transfers
+     Method: GET, OPTIONS
+     Chức năng: Lịch sử chuyển NFT
+     Xác thực: API Key
+
+113. /api/external/wallet-scan/swaps
+     Method: GET, OPTIONS
+     Chức năng: Lịch sử swap
+     Xác thực: API Key
+
+114. /api/external/wallet-scan/payouts
+     Method: GET, OPTIONS
+     Chức năng: Lịch sử payout
+     Xác thực: API Key
+
+115. /api/external/wallet-scan/search
+     Method: GET, OPTIONS
+     Chức năng: Tìm kiếm wallet
+     Xác thực: API Key
+
+116. /api/external/wallet-scan/tx/[hash]
+     Method: GET, OPTIONS
+     Chức năng: Chi tiết transaction
+     Xác thực: API Key
+
+117. /api/external/wallet-scan/user/[username]
+     Method: GET, OPTIONS
+     Chức năng: Wallet theo username
+     Xác thực: API Key
+
+118. /api/external/wallet-scan/contract/[chain]/[address]
+     Method: GET, OPTIONS
+     Chức năng: Thông tin contract
+     Xác thực: API Key
+
+119. /api/external/wallet-scan/contracts
+     Method: GET, OPTIONS
+     Chức năng: Danh sách contracts
+     Xác thực: API Key
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: GAMIFICATION - GAME HÓA                          │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+120. /api/gamification/me
+     Method: GET
+     Chức năng: Thông tin gamification của user
+     Xác thực: Auth Required
+     Response: { level, xp, badges, achievements }
+
+121. /api/gamification/leaderboard
+     Method: GET
+     Chức năng: Bảng xếp hạng
+     Xác thực: Public
+     Query: type (xp, stars, views), timeframe
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: GIFTS - QUÀ TẶNG                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+122. /api/gifts
+     Method: GET
+     Chức năng: Danh sách quà có thể gửi
+     Xác thực: Public
+
+123. /api/gifts/send
+     Method: POST
+     Chức năng: Gửi quà cho creator/video
+     Xác thực: Auth Required
+     Body: { giftId: string, targetId: string, targetType: "VIDEO" | "USER" }
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: HEALTH - KIỂM TRA HỆ THỐNG                       │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+124. /api/health
+     Method: GET
+     Chức năng: Health check endpoint
+     Xác thực: Public
+     Response: { status: "ok", timestamp, version }
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: INSTALL - CÀI ĐẶT HỆ THỐNG                      │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+125. /api/install/status
+     Method: GET
+     Chức năng: Trạng thái cài đặt
+     Xác thực: Public (Install mode)
+
+126. /api/install/write-env
+     Method: POST
+     Chức năng: Ghi file .env
+     Xác thực: Public (Install mode)
+     Body: { DATABASE_URL, REDIS_URL, ... }
+
+127. /api/install/test-db
+     Method: POST
+     Chức năng: Test kết nối database
+     Xác thực: Public (Install mode)
+
+128. /api/install/test-redis
+     Method: POST
+     Chức năng: Test kết nối Redis
+     Xác thực: Public (Install mode)
+
+129. /api/install/test-r2
+     Method: POST
+     Chức năng: Test Cloudflare R2
+     Xác thực: Public (Install mode)
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: LIKES - THÍCH VIDEO                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+130. /api/likes
+     Method: POST
+     Chức năng: Toggle like video
+     Xác thực: Auth Required
+     Body: { videoId: string }
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: ME - TÀI KHOẢN CÁ NHÂN                           │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+131. /api/me/notifications
+     Method: GET
+     Chức năng: Danh sách thông báo
+     Xác thực: Auth Required
+     Query: page, perPage, unreadOnly
+
+132. /api/me/notifications/read
+     Method: POST
+     Chức năng: Đánh dấu đã đọc thông báo
+     Xác thực: Auth Required
+     Body: { notificationId: string } hoặc { all: true }
+
+133. /api/me/notifications/settings
+     Method: GET, POST
+     Chức năng: Cài đặt thông báo
+     Xác thực: Auth Required
+     Body: { email: boolean, push: boolean, types: string[] }
+
+134. /api/me/watch-later
+     Method: GET
+     Chức năng: Danh sách xem sau
+     Xác thực: Auth Required
+
+135. /api/me/watch-later/toggle
+     Method: POST
+     Chức năng: Thêm/xóa khỏi xem sau
+     Xác thực: Auth Required
+     Body: { videoId: string }
+
+136. /api/me/sync-sources
+     Method: GET, POST
+     Chức năng: Nguồn sync video tự động
+     Xác thực: Auth Required
+     Body (POST): { url: string, apiKey: string }
+
+137. /api/me/sync-sources/[id]
+     Method: GET, PATCH, DELETE
+     Chức năng: Quản lý sync source cụ thể
+     Xác thực: Auth Required
+
+138. /api/me/sync-sources/[id]/run
+     Method: POST
+     Chức năng: Chạy sync ngay
+     Xác thực: Auth Required
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: MEMBERSHIP - THÀNH VIÊN                          │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+139. /api/membership/purchase
+     Method: POST
+     Chức năng: Mua membership
+     Xác thực: Auth Required
+     Body: { planId: string }
+
+140. /api/membership/settings
+     Method: GET, POST
+     Chức năng: Cài đặt membership
+     Xác thực: Auth Required
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: NFT - NFT                                        │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+141. /api/nft/mint
+     Method: POST
+     Chức năng: Mint NFT từ video
+     Xác thực: Auth Required (Premium+)
+     Body: { videoId: string, supply: number }
+
+142. /api/nft/avatar
+     Method: POST
+     Chức năng: Set NFT làm avatar
+     Xác thực: Auth Required
+     Body: { nftId: string }
+
+143. /api/nft/listings/create
+     Method: POST
+     Chức năng: Tạo NFT listing
+     Xác thực: Auth Required
+     Body: { nftId: string, price: number }
+
+144. /api/nft/listings/[id]/buy
+     Method: POST
+     Chức năng: Mua NFT
+     Xác thực: Auth Required
+
+145. /api/nft/listings/[id]/cancel
+     Method: POST
+     Chức năng: Hủy listing
+     Xác thực: Auth Required
+
+146. /api/nft/auctions/create
+     Method: POST
+     Chức năng: Tạo NFT auction
+     Xác thực: Auth Required
+     Body: { nftId: string, startPrice, endTime }
+
+147. /api/nft/auctions/[id]/bid
+     Method: POST
+     Chức năng: Đặt giá đấu giá
+     Xác thực: Auth Required
+     Body: { amount: number }
+
+148. /api/nft/auctions/[id]/settle
+     Method: POST
+     Chức năng: Hoàn tất đấu giá
+     Xác thực: Auth Required
+
+149. /api/nft/auctions/[id]/cancel
+     Method: POST
+     Chức năng: Hủy đấu giá
+     Xác thực: Auth Required
+
+150. /api/nft/export/request
+     Method: POST
+     Chức năng: Yêu cầu export NFT ra blockchain
+     Xác thực: Auth Required
+     Body: { nftId: string, toChain: string }
+
+151. /api/nft/export/submit-tx
+     Method: POST
+     Chức năng: Submit transaction hash
+     Xác thực: Auth Required
+     Body: { exportId: string, txHash: string }
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: OG - OPEN GRAPH                                  │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+152. /api/og/video/[id]
+     Method: GET
+     Chức năng: OG image cho video
+     Xác thực: Public
+
+153. /api/og/creator/[id]
+     Method: GET
+     Chức năng: OG image cho creator
+     Xác thực: Public
+
+154. /api/og/clip/[id]
+     Method: GET
+     Chức năng: OG image cho clip
+     Xác thực: Public
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: PLAYLISTS - PLAYLIST                             │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+155. /api/playlists
+     Method: GET, POST
+     Chức năng: Danh sách/tạo playlist
+     Xác thực: GET=Public, POST=Auth Required
+     Body (POST): { title: string, description: string, privacy: "PUBLIC" | "PRIVATE" }
+
+156. /api/playlists/[id]
+     Method: GET, PATCH, DELETE
+     Chức năng: Chi tiết/cập nhật/xóa playlist
+     Xác thực: GET=Public, PATCH/DELETE=Auth Required (Owner)
+
+157. /api/playlists/[id]/items
+     Method: GET, POST, DELETE
+     Chức năng: Videos trong playlist
+     Xác thực: GET=Public, POST/DELETE=Auth Required
+     Body (POST): { videoId: string, position?: number }
+
+158. /api/playlists/[id]/cover
+     Method: POST
+     Chức năng: Cập nhật ảnh bìa playlist
+     Xác thực: Auth Required (Owner)
+
+159. /api/playlists/[id]/reorder
+     Method: POST
+     Chức năng: Sắp xếp lại videos
+     Xác thực: Auth Required (Owner)
+     Body: { items: [{ id, position }] }
+
+160. /api/playlists/[id]/collaborators
+     Method: GET, POST, DELETE
+     Chức năng: Quản lý người cộng tác
+     Xác thực: Auth Required (Owner)
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: PROGRESS - TIẾN TRÌNH XEM VIDEO                  │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+161. /api/progress
+     Method: GET, POST
+     Chức năng: Lấy/lưu tiến trình xem
+     Xác thực: Auth Required
+     Body (POST): { videoId: string, position: number }
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: PUBLIC - ENDPOINTS CÔNG KHAI                     │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+162. /api/public/videos
+     Method: GET
+     Chức năng: Danh sách video public
+     Xác thực: Public
+     Query: page, perPage, category, sort
+
+163. /api/public/videos/[id]
+     Method: GET
+     Chức năng: Chi tiết video
+     Xác thực: Public
+
+164. /api/public/video/[id]
+     Method: GET
+     Chức năng: Chi tiết video (alias)
+     Xác thực: Public
+
+165. /api/public/search
+     Method: GET
+     Chức năng: Tìm kiếm
+     Xác thực: Public
+     Query: q, type, page, perPage
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: REFERRALS - GIỚI THIỆU                           │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+166. /api/referrals/me
+     Method: GET
+     Chức năng: Thông tin referral của user
+     Xác thực: Auth Required
+     Response: { code, totalReferred, earnedStars }
+
+167. /api/referrals/claim
+     Method: POST
+     Chức năng: Claim phần thưởng referral
+     Xác thực: Auth Required
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: REPORTS - BÁO CÁO VI PHẠM                        │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+168. /api/reports/video
+     Method: POST
+     Chức năng: Báo cáo video vi phạm
+     Xác thực: Auth Required
+     Body: { videoId: string, reason: string, details: string }
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: SEARCH - TÌM KIẾM                                │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+169. /api/search
+     Method: GET
+     Chức năng: Tìm kiếm toàn hệ thống
+     Xác thực: Public
+     Query: q, type (videos, users, playlists), page, perPage
+
+170. /api/search/suggest
+     Method: GET
+     Chức năng: Gợi ý từ khóa tìm kiếm
+     Xác thực: Public
+     Query: q
+
+171. /api/search/trending
+     Method: GET
+     Chức năng: Từ khóa đang trending
+     Xác thực: Public
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: SEASON-PASS - SEASON PASS                        │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+172. /api/season-pass/status
+     Method: GET
+     Chức năng: Trạng thái season pass hiện tại
+     Xác thực: Auth Required
+
+173. /api/season-pass/purchase
+     Method: POST
+     Chức năng: Mua season pass
+     Xác thực: Auth Required
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: SHARES - CHIA SẺ                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+174. /api/shares
+     Method: POST
+     Chức năng: Ghi nhận chia sẻ video
+     Xác thực: Public
+     Body: { videoId: string, platform: string }
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: STARS - TIỀN ẢO TRONG APP                        │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+175. /api/stars/balance
+     Method: GET
+     Chức năng: Số dư Stars hiện tại
+     Xác thực: Auth Required
+
+176. /api/stars/send
+     Method: POST
+     Chức năng: Gửi Stars cho user khác
+     Xác thực: Auth Required
+     Body: { toUserId: string, stars: number, message?: string }
+
+177. /api/stars/topup/intent
+     Method: POST
+     Chức năng: Tạo intent nạp Stars
+     Xác thực: Auth Required
+     Body: { bundleId: string }
+
+178. /api/stars/topup/submit-tx
+     Method: POST
+     Chức năng: Submit transaction nạp Stars
+     Xác thực: Auth Required
+     Body: { intentId: string, txHash: string }
+
+179. /api/stars/topup/history
+     Method: GET
+     Chức năng: Lịch sử nạp Stars
+     Xác thực: Auth Required
+
+180. /api/stars/topup/retry
+     Method: POST
+     Chức năng: Retry nạp Stars thất bại
+     Xác thực: Auth Required
+     Body: { intentId: string }
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: STUDIO - QUẢN LÝ VIDEO                           │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+181. /api/studio/videos/[id]/chapters
+     Method: POST, PATCH
+     Chức năng: Quản lý chapters video
+     Xác thực: Auth Required (Owner)
+     Body: { chapters: [{ title, time }] }
+
+182. /api/studio/videos/[id]/access
+     Method: PATCH
+     Chức năng: Cập nhật quyền truy cập video
+     Xác thực: Auth Required (Owner)
+     Body: { privacy: "PUBLIC" | "UNLISTED" | "PRIVATE", password?: string }
+
+183. /api/studio/videos/[id]/tags/suggest
+     Method: GET
+     Chức năng: Gợi ý tags
+     Xác thực: Auth Required
+
+184. /api/studio/videos/bulk
+     Method: POST
+     Chức năng: Bulk operations trên videos
+     Xác thực: Auth Required (Owner)
+     Body: { videoIds: string[], action: "DELETE" | "HIDE" }
+
+185. /api/studio/membership/plans
+     Method: GET, POST
+     Chức năng: Quản lý membership plans
+     Xác thực: Auth Required (Creator)
+     Body (POST): { name, price, benefits }
+
+186. /api/studio/membership/plans/[id]
+     Method: PATCH, DELETE
+     Chức năng: Cập nhật/xóa plan
+     Xác thực: Auth Required (Creator)
+
+187. /api/studio/membership/nft-gate
+     Method: POST
+     Chức năng: Gắn NFT gate cho membership
+     Xác thực: Auth Required (Creator)
+     Body: { planId, contractAddress, chain }
+
+188. /api/studio/clips/create
+     Method: POST
+     Chức năng: Tạo clip từ video
+     Xác thực: Auth Required
+     Body: { videoId, start, end, title }
+
+189. /api/studio/clips/[id]/mint
+     Method: POST
+     Chức năng: Mint clip thành NFT
+     Xác thực: Auth Required
+
+190. /api/studio/editor/trim
+     Method: POST
+     Chức năng: Trim video
+     Xác thực: Auth Required
+     Body: { videoId, start, end }
+
+191. /api/studio/experiments/create
+     Method: POST
+     Chức năng: Tạo A/B test
+     Xác thực: Auth Required
+     Body: { videoId, variants }
+
+192. /api/studio/experiments/[id]/end
+     Method: POST
+     Chức năng: Kết thúc experiment
+     Xác thực: Auth Required
+
+193. /api/studio/webhooks
+     Method: GET, POST
+     Chức năng: Quản lý webhooks
+     Xác thực: Auth Required
+     Body (POST): { url, events: string[] }
+
+194. /api/studio/webhooks/[id]
+     Method: GET, PATCH, DELETE
+     Chức năng: Chi tiết/cập nhật/xóa webhook
+     Xác thực: Auth Required
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: SUBSCRIPTIONS - ĐĂNG KÝ THEO DÕI                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+195. /api/subscriptions/toggle
+     Method: POST
+     Chức năng: Toggle theo dõi creator
+     Xác thực: Auth Required
+     Body: { userId: string }
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: THEME - GIAO DIỆN                                │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+196. /api/theme/toggle
+     Method: POST
+     Chức năng: Chuyển dark/light mode
+     Xác thực: Auth Required
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: TRENDING - XU HƯỚNG                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+197. /api/trending
+     Method: GET
+     Chức năng: Videos trending
+     Xác thực: Public
+     Query: timeframe (day, week, month), category
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: UPLOAD - UPLOAD VIDEO                            │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+198. /api/upload/init
+     Method: POST
+     Chức năng: Khởi tạo multipart upload
+     Xác thực: Auth Required
+     Body: { filename, filesize, contentType }
+
+199. /api/upload/sign-part
+     Method: POST
+     Chức năng: Ký URL cho từng part
+     Xác thực: Auth Required
+     Body: { uploadId, partNumber }
+
+200. /api/upload/complete
+     Method: POST
+     Chức năng: Hoàn tất upload
+     Xác thực: Auth Required
+     Body: { uploadId, parts, metadata }
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: USER - THÔNG TIN USER                            │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+201. /api/user/preferences/language
+     Method: POST
+     Chức năng: Thay đổi ngôn ngữ
+     Xác thực: Auth Required
+     Body: { language: "vi" | "en" | "ja" | ... }
+
+202. /api/user/preferences/sensitive
+     Method: POST
+     Chức năng: Cài đặt hiển thị nội dung nhạy cảm
+     Xác thực: Auth Required
+     Body: { showSensitive: boolean }
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: VERIFY - XÁC MINH                                │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+203. /api/verify
+     Method: POST
+     Chức năng: Yêu cầu verify tài khoản
+     Xác thực: Auth Required
+     Body: { document: string, type: "ID" | "PASSPORT" }
+
+204. /api/verify/status
+     Method: GET
+     Chức năng: Trạng thái verify
+     Xác thực: Auth Required
+
+205. /api/verify/worker
+     Method: POST
+     Chức năng: Worker xử lý verify (internal)
+     Xác thực: Internal
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: VIDEOS - VIDEO                                   │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+206. /api/videos/[id]/chapters
+     Method: GET
+     Chức năng: Lấy chapters của video
+     Xác thực: Public
+
+207. /api/videos/[id]/password
+     Method: POST
+     Chức năng: Nhập mật khẩu để xem video
+     Xác thực: Public
+     Body: { password: string }
+
+208. /api/videos/[id]/unlock
+     Method: POST
+     Chức năng: Unlock video bằng Stars
+     Xác thực: Auth Required
+
+209. /api/videos/[id]/nft-unlock/check
+     Method: GET
+     Chức năng: Kiểm tra NFT unlock
+     Xác thực: Auth Required
+
+210. /api/videos/queue-process
+     Method: POST
+     Chức năng: Xử lý video queue (internal)
+     Xác thực: Internal
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: VIEWS - LƯỢT XEM                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+211. /api/views
+     Method: POST
+     Chức năng: Ghi nhận view video
+     Xác thực: Public
+     Body: { videoId: string }
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: WALLETS - VÍ                                     │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+212. /api/wallets/list
+     Method: GET
+     Chức năng: Danh sách ví đã liên kết
+     Xác thực: Auth Required
+
+213. /api/wallets/link
+     Method: POST
+     Chức năng: Liên kết ví Web3
+     Xác thực: Auth Required
+     Body: { address: string, signature: string, message: string }
+
+214. /api/wallets/unlink
+     Method: POST
+     Chức năng: Gỡ liên kết ví
+     Xác thực: Auth Required
+     Body: { walletId: string }
+
+215. /api/wallets/sync
+     Method: POST
+     Chức năng: Đồng bộ dữ liệu ví
+     Xác thực: Auth Required
+
+216. /api/wallets/challenge
+     Method: GET
+     Chức năng: Lấy challenge message để ký
+     Xác thực: Public
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     MODULE: WEBHOOKS - WEBHOOKS                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+217. /api/webhooks/alchemy
+     Method: POST
+     Chức năng: Webhook từ Alchemy
+     Xác thực: Signature validation
+
+218. /api/webhooks/helius
+     Method: POST
+     Chức năng: Webhook từ Helius
+     Xác thực: Signature validation
+
+219. /api/webhooks/quicknode
+     Method: POST
+     Chức năng: Webhook từ QuickNode
+     Xác thực: Signature validation
+
+220. /api/webhooks/trongrid
+     Method: POST
+     Chức năng: Webhook từ TronGrid
+     Xác thực: Signature validation
+
+==================================================================================
+                        GỢI Ý API CẦN BỔ SUNG
+==================================================================================
+
+Dưới đây là danh sách các API endpoints được đề xuất bổ sung vào hệ thống để
+hoàn thiện chức năng:
+
+1. POST /api/auth/forgot-password
+   Chức năng: Yêu cầu reset mật khẩu qua email
+   Body: { email: string }
+   Response: { ok: true, message: "Email sent" }
+
+2. POST /api/auth/reset-password
+   Chức năng: Đặt lại mật khẩu mới với token
+   Body: { token: string, password: string }
+   Response: { ok: true }
+
+3. GET /api/me/profile
+   Chức năng: Lấy thông tin profile cá nhân đầy đủ
+   Response: { user, stats, preferences, membership }
+
+4. PATCH /api/me/profile
+   Chức năng: Cập nhật thông tin profile
+   Body: { username?, displayName?, bio?, avatar?, banner? }
+
+5. GET /api/me/star-transactions
+   Chức năng: Lịch sử giao dịch Stars chi tiết
+   Query: page, perPage, type, startDate, endDate
+   Response: { transactions, total, balance }
+
+6. GET /api/me/memberships
+   Chức năng: Danh sách membership đã mua
+   Response: [{ creatorId, planId, startDate, endDate, status }]
+
+7. POST /api/videos/[id]/report
+   Chức năng: Báo cáo video vi phạm (đã có /api/reports/video)
+   Note: Có thể merge với endpoint hiện tại
+
+8. GET /api/admin/users
+   Chức năng: Danh sách users cho admin quản lý
+   Query: page, perPage, search, role, status
+   Response: { users, total, pagination }
+
+9. POST /api/admin/users/[id]/ban
+   Chức năng: Ban user vi phạm
+   Body: { reason: string, duration?: number, permanent?: boolean }
+
+10. GET /api/admin/dashboard/stats
+    Chức năng: Thống kê tổng quan cho admin dashboard
+    Response: { 
+      users: { total, new, active },
+      videos: { total, published, processing },
+      revenue: { today, week, month },
+      activity: { views, likes, comments }
+    }
+
+11. GET /api/admin/analytics/overview
+    Chức năng: Phân tích tổng quan hệ thống
+    Query: startDate, endDate
+    Response: { metrics, charts, insights }
+
+12. POST /api/me/2fa/enable
+    Chức năng: Bật xác thực 2 bước
+    Body: { method: "totp" | "sms", phone?: string }
+    Response: { qrCode?, secret?, backupCodes }
+
+13. GET /api/categories
+    Chức năng: Danh sách categories video
+    Response: [{ id, name, slug, icon, videoCount }]
+
+14. GET /api/channels/[slug]
+    Chức năng: Thông tin channel theo slug
+    Response: { user, stats, videos, playlists, memberships }
+
+15. POST /api/external/live/streams
+    Chức năng: Tạo live stream mới qua external API
+    Note: Endpoint này đã tồn tại (line 77)
+
+==================================================================================
+                        GHI CHÚ QUAN TRỌNG
+==================================================================================
+
+1. AUTHENTICATION PATTERNS:
+   - Internal APIs: Sử dụng NextAuth session
+   - External APIs: Sử dụng API Key trong header X-API-Key
+   - Webhooks: Signature validation
+
+2. RATE LIMITING:
+   - Hầu hết APIs có rate limit mặc định
+   - APIs quan trọng (boost, payment) có rate limit nghiêm ngặt hơn
+
+3. PAGINATION:
+   - Standard: ?page=1&perPage=20
+   - GraphQL-style: ?after=cursor&perPage=20
+
+4. ERROR HANDLING:
+   - Tất cả APIs trả về JSON format
+   - Error format: { error: string, details?: any }
+
+5. CORS:
+   - External APIs có CORS enabled
+   - Internal APIs không có CORS
+
+==================================================================================
+                            KẾT THÚC TÀI LIỆU
+==================================================================================
