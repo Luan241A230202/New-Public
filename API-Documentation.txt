@@ -1793,3 +1793,249 @@ CÒN THIẾU:
 - GET /api/search/suggestions - Gợi ý tìm kiếm
 - GET /api/hashtags/trending - Hashtag thịnh hành
 
+
+---
+---
+
+# 🎉 CẬP NHẬT MỚI - VERSION 1.2
+
+## THAY ĐỔI SUPER THANKS TIERS (GẤP ĐÔI) ⚡
+
+### Tier Mới (Đã tăng gấp đôi):
+- **🔶 Bronze**: 1-10 sao (trước: 1-5)
+- **⚪ Silver**: 11-20 sao (trước: 6-10)
+- **🟡 Gold**: 21-50 sao (trước: 11-25)
+- **⬜ Platinum**: 51-100 sao (trước: 26-50)
+- **💎 Diamond**: 101+ sao (trước: 51+)
+
+### Thay Đổi Khác:
+- **Max Stars**: 100 → 200 sao
+- **TOP SUPPORTER**: 50+ → 100+ sao tổng
+- **Quick Select**: [10, 20, 50, 100, 200]
+
+---
+
+## MODULE: VIDEO REACTIONS (MỚI) 🎭
+
+### POST /api/videos/[id]/react
+**Chức năng**: Thêm hoặc cập nhật reaction cho video  
+**Auth**: Required  
+**Body**:
+```json
+{
+  "type": "like" | "love" | "haha" | "wow" | "sad" | "angry" | "fire" | "star"
+}
+```
+**Response**:
+```json
+{
+  "success": true,
+  "reaction": { "id": "...", "type": "like", "userId": "...", "videoId": "..." },
+  "message": "Reaction added"
+}
+```
+
+**8 Loại Reactions**:
+- 👍 **like** - Thích
+- ❤️ **love** - Yêu thích
+- 😂 **haha** - Hài hước
+- 😮 **wow** - Ngạc nhiên
+- 😢 **sad** - Buồn
+- 😠 **angry** - Giận dữ
+- 🔥 **fire** - Cực hay
+- ⭐ **star** - Xuất sắc
+
+### DELETE /api/videos/[id]/react
+**Chức năng**: Xóa reaction khỏi video  
+**Auth**: Required
+
+### GET /api/videos/[id]/reactions
+**Chức năng**: Lấy số lượng reactions của video  
+**Auth**: Public  
+**Response**:
+```json
+{
+  "reactions": {
+    "like": 1250,
+    "love": 890,
+    "haha": 120,
+    "wow": 200,
+    "sad": 15,
+    "angry": 5,
+    "fire": 450,
+    "star": 320
+  },
+  "total": 3250,
+  "videoId": "..."
+}
+```
+
+---
+
+## MODULE: VIRTUAL GIFTS (MỚI) 🎁
+
+### GET /api/gifts/catalog
+**Chức năng**: Xem catalog quà tặng ảo  
+**Auth**: Public  
+**Response**: 12 loại quà từ 10-200 sao
+
+**Gift Catalog**:
+1. 🌹 **Rose** - 10 sao (Bronze)
+2. ⭐ **Star** - 15 sao (Bronze)
+3. 🎈 **Balloon** - 12 sao (Bronze)
+4. ❤️ **Heart** - 20 sao (Silver)
+5. 🎁 **Gift Box** - 25 sao (Silver)
+6. 🚀 **Rocket** - 30 sao (Silver)
+7. 🎂 **Cake** - 35 sao (Gold)
+8. 🔥 **Fire** - 40 sao (Gold)
+9. 🎉 **Confetti** - 45 sao (Gold)
+10. 🏆 **Trophy** - 50 sao (Gold)
+11. 👑 **Crown** - 100 sao (Platinum)
+12. 💎 **Diamond** - 200 sao (Diamond)
+
+### POST /api/videos/[id]/gift
+**Chức năng**: Gửi quà tặng ảo cho creator  
+**Auth**: Required  
+**Body**:
+```json
+{
+  "giftId": "rose",
+  "quantity": 5,
+  "anonymous": false
+}
+```
+**Tính năng**:
+- Tặng 1 hoặc nhiều quà cùng lúc
+- Tùy chọn ẩn danh
+- Tự động trừ stars và cộng cho creator
+- Thưởng XP cho cả người gửi và người nhận
+- Track transaction history
+
+---
+
+## MODULE: LIVE STREAMING (MỚI) 🎬
+
+### POST /api/live/create
+**Chức năng**: Tạo live stream mới  
+**Auth**: Required  
+**Body**:
+```json
+{
+  "title": "My Live Stream",
+  "description": "Live coding session",
+  "category": "Education",
+  "thumbnailUrl": "https://..."
+}
+```
+**Response**: Stream info + RTMP URL + Stream Key
+
+### GET /api/live/active
+**Chức năng**: Danh sách stream đang live  
+**Auth**: Public  
+**Query**: ?category=gaming&page=1&limit=20  
+**Response**: Danh sách streams sắp xếp theo viewer count
+
+### GET /api/live/[id]
+**Chức năng**: Thông tin chi tiết live stream  
+**Auth**: Public  
+**Tính năng**: Tự động tăng viewer count khi xem
+
+### POST /api/live/[id]/end
+**Chức năng**: Kết thúc live stream  
+**Auth**: Required (Owner only)
+
+### POST /api/live/[id]/chat
+**Chức năng**: Gửi tin nhắn chat trong live  
+**Auth**: Required  
+**Body**:
+```json
+{
+  "message": "Hello everyone! 👋"
+}
+```
+**Giới hạn**: 500 ký tự
+
+### GET /api/live/[id]/chat
+**Chức năng**: Lấy tin nhắn chat  
+**Auth**: Public  
+**Query**: ?since=2024-01-01T00:00:00Z&limit=50  
+**Tính năng**: Real-time polling hoặc WebSocket
+
+### POST /api/live/[id]/super-chat
+**Chức năng**: Gửi Super Chat trong live stream  
+**Auth**: Required  
+**Body**:
+```json
+{
+  "message": "Amazing stream!",
+  "stars": 100
+}
+```
+
+**Super Chat Tiers**:
+- **🔶 Bronze**: 10 sao (min)
+- **⚪ Silver**: 50 sao
+- **🟡 Gold**: 100 sao
+- **⬜ Platinum**: 250 sao
+- **💎 Diamond**: 500 sao
+
+**Tính năng**:
+- Message được pin lên đầu chat
+- Có màu sắc theo tier
+- Thưởng XP cao hơn chat thường
+- Hiển thị lâu hơn trên chat
+
+---
+
+## THỐNG KÊ API MỚI
+
+### Version 1.2 Updates:
+- **Tổng API Endpoints**: 270+ (tăng 13 endpoints)
+- **Module Mới**: 3 (Reactions, Gifts, Live Streaming)
+- **Reaction Types**: 8 loại
+- **Gift Types**: 12 loại (10-200 sao)
+- **Live Super Chat Tiers**: 5 cấp (10-500 sao)
+- **Super Thanks Updated**: Tiers gấp đôi, max 200 sao
+
+### API Breakdown:
+- **Video Interactions**: 3 endpoints (react, reactions, gift)
+- **Gifts**: 1 endpoint (catalog)
+- **Live Streaming**: 7 endpoints (create, active, info, chat, super-chat, end)
+- **Super Thanks**: Updated tiers, max doubled
+
+---
+
+## ROADMAP TIẾP THEO
+
+### Q1 2026:
+- ✅ Super Thanks với hiệu ứng đặc biệt (DONE)
+- ✅ Video Reactions 8 loại (DONE)
+- ✅ Virtual Gifts 12 loại (DONE)
+- ✅ Live Streaming với Super Chat (DONE)
+- 🔄 Advanced Analytics Dashboard
+- 🔄 Community Polls & Voting
+- 🔄 Personalized Feed Algorithm
+
+### Q2 2026:
+- 📋 Mobile Apps (iOS + Android)
+- 📋 WebSocket Real-time Updates
+- 📋 AI Content Recommendations
+- 📋 Advanced Moderation Tools
+- 📋 Multi-language Support
+- 📋 CDN & Performance Optimization
+
+### Q3 2026:
+- 📋 NFT Integration for Creators
+- 📋 Blockchain Rewards System
+- 📋 Advanced Creator Tools
+- 📋 Collaboration Features
+- 📋 Live Stream Co-hosting
+- 📋 Premium Subscriptions
+
+---
+
+**Cập nhật**: 2026-02-09  
+**Version**: 1.2  
+**Tổng Endpoints**: 270+  
+**Modules**: 35+
+

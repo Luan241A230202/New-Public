@@ -8,37 +8,37 @@ Super Thanks là tính năng cho phép người xem tặng sao (stars) cho nhữ
 
 ### 1. **Gửi Super Thanks**
 - Nhấn nút "Super Thanks" bên dưới bất kỳ bình luận nào
-- Chọn số lượng sao muốn tặng (1-100 sao)
+- Chọn số lượng sao muốn tặng (1-200 sao)
 - Tùy chọn gửi ẩn danh
 - Xem trước tier (Bronze, Silver, Gold, Platinum, Diamond)
 
-### 2. **Hệ Thống Tier (Cấp Bậc)**
+### 2. **Hệ Thống Tier (Cấp Bậc)** - ⚡ **CẬP NHẬT MỚI: GẤP ĐÔI**
 
-#### 🔶 Bronze (1-5 sao)
+#### 🔶 Bronze (1-10 sao) 
 - Gradient: Amber 700 → Amber 600
 - Viền: Màu amber
 - Hiệu ứng: Shimmer nhẹ, 1 sparkle
 
-#### ⚪ Silver (6-10 sao)
+#### ⚪ Silver (11-20 sao)
 - Gradient: Gray 400 → Gray 300
 - Viền: Màu xám bạc
 - Hiệu ứng: Shimmer trung bình, 1-2 sparkles
 
-#### 🟡 Gold (11-25 sao)
+#### 🟡 Gold (21-50 sao)
 - Gradient: Yellow 500 → Amber 500
 - Viền: Màu vàng
 - Hiệu ứng: Shimmer mạnh, 2-3 sparkles
 
-#### ⬜ Platinum (26-50 sao)
+#### ⬜ Platinum (51-100 sao)
 - Gradient: Slate 300 → Slate 200
 - Viền: Màu bạch kim
 - Hiệu ứng: Shimmer rất mạnh, 3-4 sparkles
 
-#### 💎 Diamond (51+ sao)
+#### 💎 Diamond (101+ sao)
 - Gradient: Purple 500 → Pink 500
 - Viền: Màu tím-hồng rực rỡ
 - Hiệu ứng: Shimmer cực mạnh, 5 sparkles
-- **Bonus**: TOP SUPPORTER badge nếu là người tặng nhiều sao nhất
+- **Bonus**: TOP SUPPORTER badge nếu tặng tổng cộng 100+ sao
 
 ### 3. **Hiệu Ứng Đặc Biệt**
 
