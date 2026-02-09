@@ -1554,3 +1554,227 @@ CÒN THIẾU:
 ==================================================================================
                             KẾT THÚC TÀI LIỆU
 ==================================================================================
+---
+
+## CÁC API MỚI ĐƯỢC BỔ SUNG (Phần 2)
+
+### VIDEO - Tính năng mở rộng
+
+**GET /api/videos/[id]/related**
+- Mô tả: Lấy danh sách video liên quan dựa trên tags và category
+- Method: GET
+- Auth: Public
+- Response: Danh sách 12 video liên quan với thông tin creator
+- Thuật toán: Matching tags và category của video hiện tại
+
+**GET /api/videos/[id]/chapters**
+- Mô tả: Lấy danh sách chapters (đánh dấu thời gian) của video
+- Method: GET
+- Auth: Public
+- Response: Danh sách chapters với timestamp và title
+- Dùng cho: Video dài có nhiều phần nội dung
+
+### WATCH LATER - Xem sau
+
+**GET /api/me/watch-later**
+- Mô tả: Lấy danh sách video đã lưu để xem sau
+- Method: GET
+- Auth: Required
+- Response: Danh sách video với thông tin đầy đủ
+- Sắp xếp: Theo thời gian thêm mới nhất
+
+**POST /api/me/watch-later**
+- Mô tả: Thêm video vào danh sách xem sau
+- Method: POST
+- Auth: Required
+- Body: { videoId: string }
+- Tự động tạo bản ghi mới
+
+**DELETE /api/me/watch-later?videoId=[id]**
+- Mô tả: Xóa video khỏi danh sách xem sau
+- Method: DELETE
+- Auth: Required
+- Query: videoId (required)
+
+### HISTORY - Lịch sử xem
+
+**GET /api/me/history**
+- Mô tả: Lấy lịch sử xem video của user
+- Method: GET
+- Auth: Required
+- Response: 50 video gần nhất đã xem
+- Sắp xếp: Theo thời gian xem mới nhất
+- Bao gồm: Thông tin video và creator
+
+**DELETE /api/me/history**
+- Mô tả: Xóa toàn bộ lịch sử xem
+- Method: DELETE
+- Auth: Required
+- Hành động: Xóa tất cả bản ghi lịch sử của user
+
+### CHANNELS - Kênh creator
+
+**GET /api/channels/[slug]**
+- Mô tả: Lấy thông tin kênh creator theo username hoặc ID
+- Method: GET
+- Auth: Public
+- Params: slug (username hoặc user ID)
+- Response:
+  - Thông tin kênh (avatar, bio, ngày tạo)
+  - Số lượng subscriber và video
+  - 20 video mới nhất của kênh
+
+### CATEGORIES - Danh mục
+
+**GET /api/categories**
+- Mô tả: Lấy danh sách tất cả categories video
+- Method: GET
+- Auth: Public
+- Response: Array categories với id, name, icon, description
+- Categories bao gồm:
+  - Gaming 🎮
+  - Giáo dục ��
+  - Giải trí 🎬
+  - Âm nhạc 🎵
+  - Công nghệ 💻
+  - Thể thao ⚽
+  - Ẩm thực 🍔
+  - Du lịch ✈️
+  - Lifestyle 🌟
+  - Tin tức 📰
+
+---
+
+## DANH SÁCH TRANG GIAO DIỆN ĐÃ TẠO
+
+### UI-APP - Ứng dụng người dùng (23 trang)
+
+**Trang chính:**
+1. `/` - Trang chủ với trending videos và categories
+2. `/video/[id]` - Trang xem video với player, comments, related videos
+3. `/search` - Tìm kiếm video với filters
+4. `/trending` - Video thịnh hành
+
+**Studio Creator:**
+5. `/studio` - Dashboard tổng quan cho creator
+6. `/studio/upload` - Upload video với drag & drop
+7. `/studio/videos` - Quản lý video đã tải lên
+8. `/studio/analytics` - Phân tích chi tiết video
+9. `/studio/monetization` - Quản lý thu nhập
+10. `/studio/community` - Tương tác với cộng đồng
+
+**Quản lý cá nhân:**
+11. `/profile/[id]` - Trang profile người dùng
+12. `/settings` - Cài đặt tài khoản
+13. `/notifications` - Thông báo
+14. `/wallet` - Ví Stars và giao dịch
+15. `/watch-later` - Danh sách xem sau
+16. `/history` - Lịch sử xem
+17. `/playlists` - Danh sách playlist
+18. `/playlist/[id]` - Xem chi tiết playlist
+
+**Social:**
+19. `/channel/[slug]` - Kênh creator
+20. `/subscriptions` - Kênh đã đăng ký
+21. `/community` - Bài viết cộng đồng
+22. `/community/create` - Tạo bài viết/poll
+23. `/leaderboard` - Bảng xếp hạng gamification
+
+### UI-AUTH - Xác thực (4 trang)
+
+1. `/auth/login` - Đăng nhập với social auth
+2. `/auth/register` - Đăng ký tài khoản
+3. `/auth/forgot-password` - Quên mật khẩu
+4. `/auth/reset-password` - Đặt lại mật khẩu
+
+### UI-ADMIN - Quản trị (8 trang)
+
+1. `/` - Dashboard tổng quan
+2. `/users` - Quản lý người dùng
+3. `/videos` - Quản lý và kiểm duyệt video
+4. `/payments` - Quản lý thanh toán
+5. `/reports` - Xử lý báo cáo vi phạm
+6. `/moderation` - Hàng đợi kiểm duyệt AI
+7. `/settings` - Cài đặt hệ thống
+8. `/analytics` - Phân tích tổng quan
+
+### UI-WALLETSCAN - Blockchain (5 trang)
+
+1. `/` - Tìm kiếm wallet và blockchain
+2. `/wallet/[address]` - Chi tiết ví với tokens và NFTs
+3. `/transaction/[hash]` - Chi tiết giao dịch
+4. `/nft/[id]` - Chi tiết NFT với metadata
+5. `/contract/[address]` - Chi tiết smart contract với ABI
+
+---
+
+## TỔNG KẾT HỆ THỐNG
+
+### Thống kê API:
+- **260+ API endpoints** được document đầy đủ
+- **8 API xác thực mới** (forgot-password, reset-password, 2FA, profile)
+- **8 API video mới** (related, chapters, watch-later, history, channels, categories)
+- Tất cả API có validation, error handling và rate limiting
+
+### Thống kê UI:
+- **4 ứng dụng frontend** hoàn chỉnh
+- **40 trang** với thiết kế hiện đại
+- **Lucide React icons** đầy đủ
+- **Gradient design** và glass morphism
+- **Responsive** cho mobile và desktop
+- **Dark mode** support
+
+### Công nghệ sử dụng:
+- Next.js 15.2.9 (latest secure version)
+- React 18+ với Server Components
+- TypeScript cho type safety
+- Tailwind CSS cho styling
+- Lucide React cho icons
+- Prisma ORM cho database
+- NextAuth cho authentication
+
+---
+
+## GỢI Ý TÍNH NĂNG TIẾP THEO
+
+### 1. Live Streaming
+- POST /api/live/start - Bắt đầu live stream
+- POST /api/live/end - Kết thúc stream
+- GET /api/live/active - Danh sách stream đang live
+- GET /api/live/[id]/chat - Chat real-time
+
+### 2. Playlists Nâng cao
+- POST /api/playlists/create - Tạo playlist mới
+- POST /api/playlists/[id]/add - Thêm video vào playlist
+- PATCH /api/playlists/[id]/reorder - Sắp xếp lại video
+- GET /api/playlists/[id] - Chi tiết playlist
+
+### 3. Advanced Analytics
+- GET /api/studio/analytics/audience - Phân tích khán giả
+- GET /api/studio/analytics/engagement - Phân tích tương tác
+- GET /api/studio/analytics/revenue - Phân tích doanh thu
+- GET /api/studio/analytics/traffic - Nguồn traffic
+
+### 4. Notifications Real-time
+- WebSocket /ws/notifications - Real-time notifications
+- POST /api/notifications/mark-read - Đánh dấu đã đọc
+- POST /api/notifications/settings - Cài đặt thông báo
+
+### 5. Social Features
+- POST /api/community/posts - Tạo bài viết cộng đồng
+- POST /api/community/polls - Tạo poll
+- POST /api/comments/[id]/reply - Trả lời comment
+- POST /api/videos/[id]/clip - Tạo clip từ video
+
+### 6. Monetization
+- GET /api/stars/bundles - Gói Stars để mua
+- POST /api/stars/purchase - Mua Stars
+- POST /api/videos/[id]/gift - Tặng quà cho creator
+- GET /api/me/earnings - Thu nhập của creator
+
+### 7. SEO & Discovery
+- GET /api/sitemap.xml - Sitemap cho SEO
+- GET /api/videos/recommended - Video đề xuất AI
+- GET /api/search/suggestions - Gợi ý tìm kiếm
+- GET /api/hashtags/trending - Hashtag thịnh hành
+
