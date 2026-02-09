@@ -76,10 +76,10 @@ export default function VideoPage({ params }: { params: { id: string } }) {
 
   // Get tier based on stars
   const getTier = (stars: number) => {
-    if (stars <= 5) return 'bronze';
-    if (stars <= 10) return 'silver';
-    if (stars <= 25) return 'gold';
-    if (stars <= 50) return 'platinum';
+    if (stars <= 10) return 'bronze';
+    if (stars <= 20) return 'silver';
+    if (stars <= 50) return 'gold';
+    if (stars <= 100) return 'platinum';
     return 'diamond';
   };
 
@@ -458,18 +458,18 @@ export default function VideoPage({ params }: { params: { id: string } }) {
             {/* Star Amount Selector */}
             <div className="mb-4">
               <label className="block text-sm font-medium mb-2">
-                Select Star Amount (1-100):
+                Select Star Amount (1-200):
               </label>
               <div className="flex items-center gap-4">
                 <input
                   type="range"
                   min="1"
-                  max="100"
+                  max="200"
                   value={superThanksStars}
                   onChange={(e) => setSuperThanksStars(Number(e.target.value))}
                   className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
                   style={{
-                    background: `linear-gradient(to right, #f59e0b 0%, #f59e0b ${superThanksStars}%, #e5e7eb ${superThanksStars}%, #e5e7eb 100%)`,
+                    background: `linear-gradient(to right, #f59e0b 0%, #f59e0b ${superThanksStars / 2}%, #e5e7eb ${superThanksStars / 2}%, #e5e7eb 100%)`,
                   }}
                 />
                 <div className="w-20 px-3 py-2 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-lg text-center font-bold">
@@ -480,7 +480,7 @@ export default function VideoPage({ params }: { params: { id: string } }) {
               
               {/* Quick Select Buttons */}
               <div className="flex gap-2 mt-3">
-                {[5, 10, 25, 50, 100].map((amount) => (
+                {[10, 20, 50, 100, 200].map((amount) => (
                   <button
                     key={amount}
                     onClick={() => setSuperThanksStars(amount)}

@@ -22,9 +22,9 @@ export async function POST(
   const stars = body?.stars as number | undefined;
   const anonymous = Boolean(body?.anonymous);
 
-  if (!stars || stars < 1 || stars > 100) {
+  if (!stars || stars < 1 || stars > 200) {
     return Response.json(
-      { error: "Stars must be between 1 and 100" },
+      { error: "Stars must be between 1 and 200" },
       { status: 400 }
     );
   }
