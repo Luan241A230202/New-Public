@@ -335,6 +335,36 @@ Tổng số API Endpoints: 250+
     Xác thực: Public
     Body: { email: string, password: string, username: string }
 
+52. /api/auth/forgot-password
+    Method: POST
+    Chức năng: Yêu cầu reset mật khẩu qua email
+    Xác thực: Public
+    Rate Limit: 3 requests/5 minutes per IP
+    Body: { email: string }
+    Response: { ok: true, message: string }
+
+53. /api/auth/reset-password
+    Method: POST
+    Chức năng: Đặt lại mật khẩu với token
+    Xác thực: Public
+    Body: { token: string, password: string }
+    Response: { ok: true, message: string }
+
+54. /api/auth/verify-email
+    Method: POST
+    Chức năng: Xác thực email với token
+    Xác thực: Public
+    Body: { token: string }
+    Response: { ok: true, message: string }
+
+55. /api/auth/resend-verification
+    Method: POST
+    Chức năng: Gửi lại email xác thực
+    Xác thực: Public
+    Rate Limit: 3 requests/5 minutes per IP
+    Body: { email: string }
+    Response: { ok: true, message: string }
+
 ┌──────────────────────────────────────────────────────────────────────────────┐
 │                    MODULE: BOOST - BOOST VIDEO                               │
 └──────────────────────────────────────────────────────────────────────────────┘
@@ -843,6 +873,41 @@ Tổng số API Endpoints: 250+
      Method: POST
      Chức năng: Chạy sync ngay
      Xác thực: Auth Required
+
+139. /api/me/profile
+     Method: GET
+     Chức năng: Lấy thông tin profile cá nhân đầy đủ
+     Xác thực: Auth Required
+     Response: { user: { id, username, email, displayName, bio, avatar, banner, role, starBalance, stats } }
+
+140. /api/me/profile
+     Method: PATCH
+     Chức năng: Cập nhật thông tin profile
+     Xác thực: Auth Required
+     Body: { username?, displayName?, bio?, avatar?, banner? }
+     Response: { ok: true, user: { updated fields } }
+
+141. /api/me/change-password
+     Method: POST
+     Chức năng: Đổi mật khẩu
+     Xác thực: Auth Required
+     Body: { currentPassword: string, newPassword: string }
+     Response: { ok: true, message: string }
+
+142. /api/me/2fa
+     Method: GET
+     Chức năng: Lấy trạng thái 2FA
+     Xác thực: Auth Required
+     Response: { twoFactorEnabled: boolean, twoFactorMethod: string, twoFactorPhone?: string }
+
+143. /api/me/2fa
+     Method: POST
+     Chức năng: Quản lý 2FA (enable/verify/disable)
+     Xác thực: Auth Required
+     Body (enable): { action: "enable", method: "totp" | "sms", phone?: string }
+     Body (verify): { action: "verify", code: string }
+     Body (disable): { action: "disable", code: string }
+     Response: { ok: true, secret?, qrCode?, backupCodes?, message }
 
 ┌──────────────────────────────────────────────────────────────────────────────┐
 │                     MODULE: MEMBERSHIP - THÀNH VIÊN                          │
@@ -1397,38 +1462,31 @@ Tổng số API Endpoints: 250+
 Dưới đây là danh sách các API endpoints được đề xuất bổ sung vào hệ thống để
 hoàn thiện chức năng:
 
-1. POST /api/auth/forgot-password
-   Chức năng: Yêu cầu reset mật khẩu qua email
-   Body: { email: string }
-   Response: { ok: true, message: "Email sent" }
+✅ ĐÃ THỰC HIỆN:
+1. ✅ POST /api/auth/forgot-password - Đã có
+2. ✅ POST /api/auth/reset-password - Đã có
+3. ✅ GET /api/me/profile - Đã có
+4. ✅ PATCH /api/me/profile - Đã có
+5. ✅ POST /api/me/change-password - Đã có
+6. ✅ POST /api/me/2fa (enable/verify/disable) - Đã có
+7. ✅ POST /api/auth/verify-email - Đã có
+8. ✅ POST /api/auth/resend-verification - Đã có
 
-2. POST /api/auth/reset-password
-   Chức năng: Đặt lại mật khẩu mới với token
-   Body: { token: string, password: string }
-   Response: { ok: true }
-
-3. GET /api/me/profile
-   Chức năng: Lấy thông tin profile cá nhân đầy đủ
-   Response: { user, stats, preferences, membership }
-
-4. PATCH /api/me/profile
-   Chức năng: Cập nhật thông tin profile
-   Body: { username?, displayName?, bio?, avatar?, banner? }
-
-5. GET /api/me/star-transactions
+CÒN THIẾU:
+9. GET /api/me/star-transactions
    Chức năng: Lịch sử giao dịch Stars chi tiết
    Query: page, perPage, type, startDate, endDate
    Response: { transactions, total, balance }
 
-6. GET /api/me/memberships
-   Chức năng: Danh sách membership đã mua
-   Response: [{ creatorId, planId, startDate, endDate, status }]
+10. GET /api/me/memberships
+    Chức năng: Danh sách membership đã mua
+    Response: [{ creatorId, planId, startDate, endDate, status }]
 
-7. POST /api/videos/[id]/report
-   Chức năng: Báo cáo video vi phạm (đã có /api/reports/video)
-   Note: Có thể merge với endpoint hiện tại
+11. POST /api/videos/[id]/report
+    Chức năng: Báo cáo video vi phạm (đã có /api/reports/video)
+    Note: Có thể merge với endpoint hiện tại
 
-8. GET /api/admin/users
+12. GET /api/admin/users
    Chức năng: Danh sách users cho admin quản lý
    Query: page, perPage, search, role, status
    Response: { users, total, pagination }
