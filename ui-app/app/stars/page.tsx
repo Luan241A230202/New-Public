@@ -69,12 +69,21 @@ const STAR_PACKAGES = [
   }
 ];
 
-// Currency options
+// Currency options - Stablecoin only (USDT/USDC)
 const CURRENCIES = [
-  { id: 'usd', name: 'USD', symbol: '$', icon: '💵', description: 'US Dollar (Fiat)' },
-  { id: 'usdt', name: 'USDT', symbol: 'USDT', icon: '₮', description: 'Tether (Stablecoin)', networks: ['Ethereum', 'BSC', 'Polygon', 'Solana'] },
-  { id: 'usdc', name: 'USDC', symbol: 'USDC', icon: '◎', description: 'USD Coin (Stablecoin)', networks: ['Ethereum', 'BSC', 'Polygon', 'Solana'] }
+  { id: 'usdt', name: 'USDT', symbol: 'USDT', icon: '₮', description: 'Tether (Stablecoin)', networks: ['Ethereum', 'BSC', 'Polygon', 'Base', 'Solana', 'Sui'] },
+  { id: 'usdc', name: 'USDC', symbol: 'USDC', icon: '◎', description: 'USD Coin (Stablecoin)', networks: ['Ethereum', 'BSC', 'Polygon', 'Base', 'Solana', 'Sui'] }
 ];
+
+// Receiving wallet addresses for each network
+const WALLET_ADDRESSES = {
+  'Ethereum': '0x8f492Ce715291Ad22feF80e244de5ea3aB875979',
+  'BSC': '0x8f492Ce715291Ad22feF80e244de5ea3aB875979',
+  'Polygon': '0x8f492Ce715291Ad22feF80e244de5ea3aB875979',
+  'Base': '0x8f492Ce715291Ad22feF80e244de5ea3aB875979',
+  'Solana': '4pcqM758FvxBaqNY3ccJYSDZtQp7ok2y7aC4xTp5knAr',
+  'Sui': '0x22e37b59a7970a597c22ac7f0f6e23f6c7ba53174eedffa4074a2aaf874c28b5'
+};
 
 // Web3 wallet options
 const WALLETS = [
@@ -139,10 +148,11 @@ const MOCK_TRANSACTIONS = [
 export default function StarsPage() {
   const [selectedPackage, setSelectedPackage] = useState<number | null>(null);
   const [selectedWallet, setSelectedWallet] = useState<string | null>(null);
-  const [selectedCurrency, setSelectedCurrency] = useState<string>('usd');
+  const [selectedCurrency, setSelectedCurrency] = useState<string>('usdt'); // Default to USDT (stablecoin only)
   const [selectedNetwork, setSelectedNetwork] = useState<string>('Ethereum');
   const [walletFilter, setWalletFilter] = useState<'all' | 'wallet' | 'exchange'>('all');
   const [copiedHash, setCopiedHash] = useState<string | null>(null);
+  const [copiedAddress, setCopiedAddress] = useState<boolean>(false);
 
   // Statistics
   const totalPurchased = 6650;
@@ -159,11 +169,21 @@ export default function StarsPage() {
     setTimeout(() => setCopiedHash(null), 2000);
   };
 
+  const handleCopyAddress = () => {
+    const address = WALLET_ADDRESSES[selectedNetwork as keyof typeof WALLET_ADDRESSES];
+    navigator.clipboard.writeText(address);
+    setCopiedAddress(true);
+    setTimeout(() => setCopiedAddress(false), 2000);
+  };
+
   const getExplorerLink = (chain: string, hash: string) => {
     const explorers: Record<string, string> = {
       'Ethereum': `https://etherscan.io/tx/${hash}`,
       'Solana': `https://solscan.io/tx/${hash}`,
-      'BSC': `https://bscscan.com/tx/${hash}`
+      'BSC': `https://bscscan.com/tx/${hash}`,
+      'Polygon': `https://polygonscan.com/tx/${hash}`,
+      'Base': `https://basescan.org/tx/${hash}`,
+      'Sui': `https://suiexplorer.com/txblock/${hash}`
     };
     return explorers[chain] || '#';
   };
@@ -216,13 +236,12 @@ export default function StarsPage() {
           </div>
         </div>
 
-        {/* Currency Selection */}
+        {/* Currency Selection - Stablecoin Only */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-4">Chọn Loại Tiền</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <h2 className="text-2xl font-bold mb-4">Chọn Loại Tiền (Stablecoin)</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {CURRENCIES.map((currency) => {
               const isSelected = selectedCurrency === currency.id;
-              const isStablecoin = currency.id !== 'usd';
               
               return (
                 <div
@@ -255,9 +274,9 @@ export default function StarsPage() {
                     </div>
                   </div>
                   
-                  {isStablecoin && currency.networks && (
+                  {currency.networks && (
                     <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-                      <div className="text-xs text-gray-600 dark:text-gray-400 mb-2">Supported Networks:</div>
+                      <div className="text-xs text-gray-600 dark:text-gray-400 mb-2">Mạng hỗ trợ:</div>
                       <div className="flex flex-wrap gap-1">
                         {currency.networks.map((network) => (
                           <span key={network} className="text-xs px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded">
@@ -273,31 +292,68 @@ export default function StarsPage() {
           </div>
           
           {/* Network Selection for Stablecoins */}
-          {selectedCurrency !== 'usd' && (
-            <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <DollarSign className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                <span className="font-semibold text-blue-900 dark:text-blue-100">Chọn Mạng (Network)</span>
+          <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+            <div className="flex items-center gap-2 mb-2">
+              <DollarSign className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              <span className="font-semibold text-blue-900 dark:text-blue-100">Chọn Mạng (Network)</span>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+              {CURRENCIES.find(c => c.id === selectedCurrency)?.networks?.map((network) => (
+                <button
+                  key={network}
+                  onClick={() => setSelectedNetwork(network)}
+                  className={`
+                    px-4 py-2 rounded-lg font-medium transition-all
+                    ${selectedNetwork === network
+                      ? 'bg-purple-500 text-white shadow-md'
+                      : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-purple-100 dark:hover:bg-purple-900/30'
+                    }
+                  `}
+                >
+                  {network}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Wallet Address Display */}
+          <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-2 border-blue-200 dark:border-blue-800">
+            <div className="flex items-center gap-2 mb-3">
+              <Wallet className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              <span className="font-semibold text-blue-900 dark:text-blue-100">
+                Địa chỉ ví nhận thanh toán ({selectedNetwork})
+              </span>
+            </div>
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-3 flex items-center gap-2">
+              <code className="flex-1 text-sm font-mono break-all text-gray-800 dark:text-gray-200">
+                {WALLET_ADDRESSES[selectedNetwork as keyof typeof WALLET_ADDRESSES]}
+              </code>
+              <button
+                onClick={handleCopyAddress}
+                className="flex-shrink-0 p-2 rounded-lg bg-purple-500 hover:bg-purple-600 text-white transition-colors"
+                title="Copy address"
+              >
+                {copiedAddress ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+              </button>
+            </div>
+          </div>
+
+          {/* Admin Contact Note */}
+          <div className="mt-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border-2 border-yellow-200 dark:border-yellow-800">
+            <div className="flex items-start gap-2">
+              <div className="flex-shrink-0 w-5 h-5 rounded-full bg-yellow-500 flex items-center justify-center mt-0.5">
+                <span className="text-white text-xs font-bold">!</span>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {CURRENCIES.find(c => c.id === selectedCurrency)?.networks?.map((network) => (
-                  <button
-                    key={network}
-                    onClick={() => setSelectedNetwork(network)}
-                    className={`
-                      px-4 py-2 rounded-lg font-medium transition-all
-                      ${selectedNetwork === network
-                        ? 'bg-purple-500 text-white shadow-md'
-                        : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-purple-100 dark:hover:bg-purple-900/30'
-                      }
-                    `}
-                  >
-                    {network}
-                  </button>
-                ))}
+              <div className="flex-1">
+                <p className="text-sm font-medium text-yellow-900 dark:text-yellow-100 mb-1">
+                  Lưu ý quan trọng:
+                </p>
+                <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                  Nếu chưa nhận được Sao sau khi thanh toán, vui lòng gửi mã <span className="font-semibold">Txn Hash</span> (Transaction Hash) cho Admin để được hỗ trợ xử lý nhanh chóng.
+                </p>
               </div>
             </div>
-          )}
+          </div>
         </div>
 
         {/* Star Packages */}
@@ -352,10 +408,7 @@ export default function StarsPage() {
                   </div>
                   
                   <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                    {CURRENCIES.find(c => c.id === selectedCurrency)?.symbol === '$' 
-                      ? `$${pkg.price}` 
-                      : `${pkg.price} ${CURRENCIES.find(c => c.id === selectedCurrency)?.symbol}`
-                    }
+                    {pkg.price} {CURRENCIES.find(c => c.id === selectedCurrency)?.symbol}
                   </div>
                   
                   {pkg.bonus > 0 && (
@@ -561,16 +614,11 @@ export default function StarsPage() {
                 <div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">Tổng</div>
                   <div className="text-xl font-bold text-purple-600 dark:text-purple-400">
-                    {CURRENCIES.find(c => c.id === selectedCurrency)?.symbol === '$' 
-                      ? `$${selectedPkg.price}` 
-                      : `${selectedPkg.price} ${CURRENCIES.find(c => c.id === selectedCurrency)?.symbol}`
-                    }
+                    {selectedPkg.price} {CURRENCIES.find(c => c.id === selectedCurrency)?.symbol}
                   </div>
-                  {selectedCurrency !== 'usd' && (
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
-                      {selectedNetwork}
-                    </div>
-                  )}
+                  <div className="text-xs text-gray-500 dark:text-gray-400">
+                    {selectedNetwork}
+                  </div>
                 </div>
                 
                 <div className="h-8 w-px bg-gray-300 dark:bg-gray-600" />
