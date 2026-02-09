@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Star, Wallet, Check, Copy, ExternalLink, TrendingUp, ShoppingBag, Gift, ArrowRight, Sparkles, Zap, Crown, Shield, ChevronDown } from 'lucide-react';
+import { Star, Wallet, Check, Copy, ExternalLink, TrendingUp, ShoppingBag, Gift, ArrowRight, Sparkles, Zap, Crown, Shield, ChevronDown, DollarSign } from 'lucide-react';
 
 // Star packages with bonuses and USD prices
 const STAR_PACKAGES = [
@@ -69,6 +69,13 @@ const STAR_PACKAGES = [
   }
 ];
 
+// Currency options
+const CURRENCIES = [
+  { id: 'usd', name: 'USD', symbol: '$', icon: '💵', description: 'US Dollar (Fiat)' },
+  { id: 'usdt', name: 'USDT', symbol: 'USDT', icon: '₮', description: 'Tether (Stablecoin)', networks: ['Ethereum', 'BSC', 'Polygon', 'Solana'] },
+  { id: 'usdc', name: 'USDC', symbol: 'USDC', icon: '◎', description: 'USD Coin (Stablecoin)', networks: ['Ethereum', 'BSC', 'Polygon', 'Solana'] }
+];
+
 // Web3 wallet options
 const WALLETS = [
   { id: 'metamask', name: 'MetaMask', icon: '🦊', type: 'wallet', color: 'orange' },
@@ -132,6 +139,8 @@ const MOCK_TRANSACTIONS = [
 export default function StarsPage() {
   const [selectedPackage, setSelectedPackage] = useState<number | null>(null);
   const [selectedWallet, setSelectedWallet] = useState<string | null>(null);
+  const [selectedCurrency, setSelectedCurrency] = useState<string>('usd');
+  const [selectedNetwork, setSelectedNetwork] = useState<string>('Ethereum');
   const [walletFilter, setWalletFilter] = useState<'all' | 'wallet' | 'exchange'>('all');
   const [copiedHash, setCopiedHash] = useState<string | null>(null);
 
@@ -207,6 +216,90 @@ export default function StarsPage() {
           </div>
         </div>
 
+        {/* Currency Selection */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold mb-4">Chọn Loại Tiền</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {CURRENCIES.map((currency) => {
+              const isSelected = selectedCurrency === currency.id;
+              const isStablecoin = currency.id !== 'usd';
+              
+              return (
+                <div
+                  key={currency.id}
+                  onClick={() => {
+                    setSelectedCurrency(currency.id);
+                    if (currency.networks && currency.networks.length > 0) {
+                      setSelectedNetwork(currency.networks[0]);
+                    }
+                  }}
+                  className={`
+                    relative cursor-pointer rounded-xl p-6 transition-all transform hover:scale-105
+                    ${isSelected 
+                      ? 'ring-4 ring-purple-500 shadow-xl bg-white dark:bg-gray-800' 
+                      : 'bg-white dark:bg-gray-800 hover:shadow-lg'
+                    }
+                  `}
+                >
+                  {isSelected && (
+                    <div className="absolute -top-3 right-3 w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center">
+                      <Check className="w-4 h-4 text-white" />
+                    </div>
+                  )}
+                  
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="text-3xl">{currency.icon}</div>
+                    <div>
+                      <div className="text-xl font-bold">{currency.name}</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">{currency.description}</div>
+                    </div>
+                  </div>
+                  
+                  {isStablecoin && currency.networks && (
+                    <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                      <div className="text-xs text-gray-600 dark:text-gray-400 mb-2">Supported Networks:</div>
+                      <div className="flex flex-wrap gap-1">
+                        {currency.networks.map((network) => (
+                          <span key={network} className="text-xs px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded">
+                            {network}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          
+          {/* Network Selection for Stablecoins */}
+          {selectedCurrency !== 'usd' && (
+            <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+              <div className="flex items-center gap-2 mb-2">
+                <DollarSign className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                <span className="font-semibold text-blue-900 dark:text-blue-100">Chọn Mạng (Network)</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {CURRENCIES.find(c => c.id === selectedCurrency)?.networks?.map((network) => (
+                  <button
+                    key={network}
+                    onClick={() => setSelectedNetwork(network)}
+                    className={`
+                      px-4 py-2 rounded-lg font-medium transition-all
+                      ${selectedNetwork === network
+                        ? 'bg-purple-500 text-white shadow-md'
+                        : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-purple-100 dark:hover:bg-purple-900/30'
+                      }
+                    `}
+                  >
+                    {network}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
         {/* Star Packages */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold mb-4">Chọn Gói Sao</h2>
@@ -259,7 +352,10 @@ export default function StarsPage() {
                   </div>
                   
                   <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                    ${pkg.price}
+                    {CURRENCIES.find(c => c.id === selectedCurrency)?.symbol === '$' 
+                      ? `$${pkg.price}` 
+                      : `${pkg.price} ${CURRENCIES.find(c => c.id === selectedCurrency)?.symbol}`
+                    }
                   </div>
                   
                   {pkg.bonus > 0 && (
@@ -465,8 +561,16 @@ export default function StarsPage() {
                 <div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">Tổng</div>
                   <div className="text-xl font-bold text-purple-600 dark:text-purple-400">
-                    ${selectedPkg.price}
+                    {CURRENCIES.find(c => c.id === selectedCurrency)?.symbol === '$' 
+                      ? `$${selectedPkg.price}` 
+                      : `${selectedPkg.price} ${CURRENCIES.find(c => c.id === selectedCurrency)?.symbol}`
+                    }
                   </div>
+                  {selectedCurrency !== 'usd' && (
+                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                      {selectedNetwork}
+                    </div>
+                  )}
                 </div>
                 
                 <div className="h-8 w-px bg-gray-300 dark:bg-gray-600" />
