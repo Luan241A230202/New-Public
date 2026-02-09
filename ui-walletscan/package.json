@@ -16,7 +16,8 @@
     "axios": "^1.6.0",
     "clsx": "^2.0.0",
     "tailwind-merge": "^2.0.0",
-    "ethers": "^6.9.0"
+    "ethers": "^6.9.0",
+    "lucide-react": "^0.300.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

@@ -17,7 +17,8 @@
     "recharts": "^2.10.0",
     "clsx": "^2.0.0",
     "tailwind-merge": "^2.0.0",
-    "date-fns": "^3.0.0"
+    "date-fns": "^3.0.0",
+    "lucide-react": "^0.300.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
