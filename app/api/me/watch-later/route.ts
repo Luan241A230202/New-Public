@@ -1,49 +1,92 @@
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { NextRequest } from "next/server";
+import { getServerSession } from "next-auth";
+import { prisma } from "@/lib/db";
 
-export const dynamic = "force-dynamic";
+export async function GET(req: NextRequest) {
+  try {
+    const session = await getServerSession();
+    if (!session?.user) {
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-export async function GET() {
-  const session = await auth();
-  if (!session?.user) return Response.json({ ok: false, error: "UNAUTHENTICATED" }, { status: 401 });
-  const userId = (session.user as any).id as string;
+    const watchLater = await prisma.watchLater.findMany({
+      where: { userId: session.user.id },
+      include: {
+        video: {
+          select: {
+            id: true,
+            title: true,
+            thumbnail: true,
+            duration: true,
+            viewCount: true,
+            createdAt: true,
+            user: {
+              select: {
+                username: true,
+                displayName: true,
+                avatar: true
+              }
+            }
+          }
+        }
+      },
+      orderBy: { createdAt: "desc" }
+    });
 
-  type WatchLaterRow = Awaited<ReturnType<typeof prisma.watchLaterItem.findMany>>[number] & {
-    video?: { status: string; title: string; thumbKey: string | null; isSensitive: boolean; durationSec: number | null } | null;
-  };
-  const items = await prisma.watchLaterItem.findMany({
-    where: { userId },
-    orderBy: { createdAt: "desc" },
-    take: 500,
-    include: { video: true },
-  });
+    return Response.json({ videos: watchLater.map(w => w.video) });
+  } catch (error) {
+    console.error("Error fetching watch later:", error);
+    return Response.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
 
-  const videoIds = (items as WatchLaterRow[]).map((i: WatchLaterRow) => i.videoId);
-  type ProgressRow = Awaited<ReturnType<typeof prisma.videoProgress.findMany>>[number];
-  const progress = await prisma.videoProgress.findMany({
-    where: { userId, videoId: { in: videoIds } },
-    select: { videoId: true, seconds: true, updatedAt: true },
-  });
-  const progressByVideo = new Map((progress as ProgressRow[]).map((p: ProgressRow) => [p.videoId, p]));
+export async function POST(req: NextRequest) {
+  try {
+    const session = await getServerSession();
+    if (!session?.user) {
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-  return Response.json({
-    ok: true,
-    items: items
-      .filter((i: WatchLaterRow) => (i.video as any)?.status === "PUBLISHED")
-      .map((i: WatchLaterRow) => {
-        const v: any = i.video;
-        const p = progressByVideo.get(i.videoId);
-        return {
-          id: i.id,
-          videoId: i.videoId,
-          createdAt: i.createdAt,
-          title: v?.title ?? "(deleted)",
-          thumbKey: v?.thumbKey ?? null,
-          isSensitive: Boolean(v?.isSensitive),
-          durationSec: v?.durationSec ?? null,
-          progressSeconds: p?.seconds ?? 0,
-          progressUpdatedAt: p?.updatedAt ?? null,
-        };
-      }),
-  });
+    const { videoId } = await req.json();
+
+    const watchLater = await prisma.watchLater.create({
+      data: {
+        userId: session.user.id,
+        videoId
+      }
+    });
+
+    return Response.json({ success: true, watchLater });
+  } catch (error) {
+    console.error("Error adding to watch later:", error);
+    return Response.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const session = await getServerSession();
+    if (!session?.user) {
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(req.url);
+    const videoId = searchParams.get("videoId");
+
+    if (!videoId) {
+      return Response.json({ error: "Video ID required" }, { status: 400 });
+    }
+
+    await prisma.watchLater.deleteMany({
+      where: {
+        userId: session.user.id,
+        videoId
+      }
+    });
+
+    return Response.json({ success: true });
+  } catch (error) {
+    console.error("Error removing from watch later:", error);
+    return Response.json({ error: "Internal server error" }, { status: 500 });
+  }
 }
