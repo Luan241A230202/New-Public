@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-const getRedis = () => null as any;
+import { getRedis } from "@/lib/redis";
 import { analyticsKeys } from "@/lib/analytics/keys";
 
 const querySchema = z.object({

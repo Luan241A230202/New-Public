@@ -1,28 +1,19 @@
-import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
-import { canViewVideoDb } from "@/lib/videoAccessDb";
+import { NextRequest } from "next/server";
+import { prisma } from "@/lib/db";
 
-export const runtime = "nodejs";
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const chapters = await prisma.videoChapter.findMany({
+      where: { videoId: params.id },
+      orderBy: { timestamp: "asc" }
+    });
 
-export async function GET(_req: Request, ctx: { params: { id: string } }) {
-  const videoId = ctx.params.id;
-  const session = await auth();
-
-  const video = await prisma.video.findUnique({
-    where: { id: videoId },
-    select: { id: true, status: true, access: true, interactionsLocked: true, authorId: true, deletedAt: true },
-  });
-  if (!video) return new Response("not found", { status: 404 });
-
-  if (!(await canViewVideoDb(video as any, session))) {
-    return new Response("forbidden", { status: 403 });
+    return Response.json({ chapters });
+  } catch (error) {
+    console.error("Error fetching chapters:", error);
+    return Response.json({ error: "Internal server error" }, { status: 500 });
   }
-
-  const chapters = await prisma.videoChapter.findMany({
-    where: { videoId },
-    orderBy: { startSec: "asc" },
-    select: { id: true, startSec: true, title: true },
-  });
-
-  return Response.json({ ok: true, chapters });
 }
