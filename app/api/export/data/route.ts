@@ -58,6 +58,8 @@ export async function POST(req: Request) {
     });
 
     // Simulate processing
+    // TODO: Replace setTimeout with proper queue-based job processing for production
+    // This is a placeholder implementation - should use queues.analytics.add() or similar
     setTimeout(async () => {
       try {
         await prisma.exportJob.update({

@@ -78,7 +78,7 @@ export async function POST(req: Request) {
     await prisma.batchJob.update({
       where: { id: batchJob.id },
       data: {
-        status: failedItems === 0 ? "COMPLETED" : "COMPLETED",
+        status: failedItems === 0 ? "COMPLETED" : failedItems === processedItems ? "FAILED" : "COMPLETED",
         processedItems,
         failedItems,
         result: { results },

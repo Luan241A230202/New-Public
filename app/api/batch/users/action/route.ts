@@ -51,38 +51,37 @@ export async function POST(req: Request) {
       try {
         let updateData: any = {};
         
-        switch (parsed.data.action) {
-          case "BAN":
-            updateData = { bannedAt: new Date() };
-            break;
-          case "UNBAN":
-            updateData = { bannedAt: null, mutedUntil: null };
-            break;
-          case "VERIFY":
-            updateData = { emailVerified: new Date() };
-            break;
-          case "MUTE_7D":
-            updateData = { mutedUntil: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) };
-            break;
-          case "UNMUTE":
-            updateData = { mutedUntil: null };
-            break;
-        }
+        // Map actions to database updates
+        const actionMap: Record<string, any> = {
+          BAN: { bannedAt: new Date() },
+          UNBAN: { bannedAt: null, mutedUntil: null },
+          VERIFY: { emailVerified: new Date() },
+          MUTE_7D: { mutedUntil: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) },
+          UNMUTE: { mutedUntil: null },
+        };
+
+        updateData = actionMap[parsed.data.action] || {};
 
         await prisma.user.update({
           where: { id: userId },
           data: updateData,
         });
 
+        // Map actions to moderation types
+        const moderationTypeMap: Record<string, any> = {
+          BAN: "BAN_USER",
+          UNBAN: "UNBAN_USER",
+          MUTE_7D: "MUTE_USER_7D",
+          UNMUTE: "UNMUTE_USER",
+          VERIFY: "STRIKE_USER", // Using existing enum
+        };
+
         // Create moderation action record
         await prisma.moderationAction.create({
           data: {
             actorId: (session.user as any).id,
             targetId: userId,
-            type: parsed.data.action === "BAN" ? "BAN_USER" : 
-                  parsed.data.action === "UNBAN" ? "UNBAN_USER" :
-                  parsed.data.action === "MUTE_7D" ? "MUTE_USER_7D" :
-                  parsed.data.action === "UNMUTE" ? "UNMUTE_USER" : "STRIKE_USER",
+            type: moderationTypeMap[parsed.data.action] || "STRIKE_USER",
             reason: parsed.data.reason || "Batch action",
           },
         });
