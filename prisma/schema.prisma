@@ -391,6 +391,13 @@ model User {
 
   // Creator goals
   creatorGoals CreatorGoal[] @relation("CreatorGoalCreator")
+
+  // Missing APIs relations
+  auditLogs     AuditLog[]
+  backups       Backup[]
+  batchJobs     BatchJob[]
+  userSessions  UserSession[]
+  exportJobs    ExportJob[]
 }
 model Notification {
   id          String           @id @default(cuid())
@@ -2547,4 +2554,115 @@ model Clip {
   @@index([videoId, createdAt])
   @@index([creatorId, createdAt])
   @@index([status, createdAt])
+}
+
+// ===== Missing APIs Infrastructure Models =====
+
+// Audit logs for compliance and security tracking
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String   // e.g., "USER_LOGIN", "VIDEO_DELETE", "ADMIN_CONFIG_UPDATE"
+  resource  String?  // e.g., "video:123", "user:456"
+  details   Json?    // Additional context
+  ipAddress String?
+  userAgent String?  @db.Text
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([action, createdAt])
+  @@index([createdAt])
+}
+
+// Backup metadata tracking
+model Backup {
+  id          String   @id @default(cuid())
+  type        String   // "FULL", "INCREMENTAL", "MANUAL"
+  status      String   // "PENDING", "IN_PROGRESS", "COMPLETED", "FAILED"
+  size        BigInt?  // Size in bytes
+  location    String?  @db.Text // Storage location/path
+  metadata    Json?    // Additional backup metadata
+  createdBy   String?
+  creator     User?    @relation(fields: [createdBy], references: [id], onDelete: SetNull)
+  createdAt   DateTime @default(now())
+  completedAt DateTime?
+  error       String?  @db.Text
+
+  @@index([status, createdAt])
+  @@index([createdBy, createdAt])
+}
+
+// Batch job tracking for bulk operations
+model BatchJob {
+  id          String   @id @default(cuid())
+  type        String   // "VIDEO_UPDATE", "USER_ACTION", "EXPORT", "IMPORT"
+  status      String   // "PENDING", "PROCESSING", "COMPLETED", "FAILED", "CANCELLED"
+  totalItems  Int      @default(0)
+  processedItems Int   @default(0)
+  failedItems Int      @default(0)
+  params      Json?    // Job parameters
+  result      Json?    // Job results/summary
+  createdBy   String?
+  creator     User?    @relation(fields: [createdBy], references: [id], onDelete: SetNull)
+  createdAt   DateTime @default(now())
+  startedAt   DateTime?
+  completedAt DateTime?
+  error       String?  @db.Text
+
+  @@index([status, createdAt])
+  @@index([type, status])
+  @@index([createdBy, createdAt])
+}
+
+// Feature flags for gradual rollout
+model FeatureFlag {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?  @db.Text
+  enabled     Boolean  @default(false)
+  rolloutPercent Int   @default(0) // 0-100
+  metadata    Json?    // Additional config
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([enabled])
+}
+
+// User sessions for device management
+model UserSession {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token       String   @unique
+  deviceInfo  String?  @db.Text
+  ipAddress   String?
+  userAgent   String?  @db.Text
+  lastActiveAt DateTime @default(now())
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+
+  @@index([userId, lastActiveAt])
+  @@index([token])
+  @@index([expiresAt])
+}
+
+// Export job tracking
+model ExportJob {
+  id          String   @id @default(cuid())
+  type        String   // "USER_DATA", "ANALYTICS", "VIDEOS", "GDPR"
+  status      String   // "PENDING", "PROCESSING", "COMPLETED", "FAILED"
+  format      String   // "CSV", "JSON", "ZIP"
+  fileUrl     String?  @db.Text
+  fileSize    BigInt?
+  params      Json?
+  createdBy   String?
+  creator     User?    @relation(fields: [createdBy], references: [id], onDelete: SetNull)
+  createdAt   DateTime @default(now())
+  completedAt DateTime?
+  expiresAt   DateTime? // Download link expiration
+  error       String?  @db.Text
+
+  @@index([status, createdAt])
+  @@index([createdBy, createdAt])
 }
