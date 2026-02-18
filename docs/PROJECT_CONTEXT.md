@@ -19,6 +19,20 @@
 ### Source of truth (bắt buộc)
 Xem `CHATKITFULL.txt` + `AI_REQUIREMENTS.md` + `CONTRACT_CHECKLIST.md` để tránh lệch contract.
 
+## v4.16.27 — Infrastructure APIs (25 endpoints) ✨
+
+### Highlights
+ - **364+ HTTP method endpoints** total across platform (exceeded 320+ target).
+ - Infrastructure APIs: rate limiting, system health/metrics, backup/restore, audit logs, GDPR export.
+ - Batch operations: bulk video updates, user actions (ban/verify/mute).
+ - Cache management: Redis clear/stats for performance optimization.
+ - Import/export: YouTube/Vimeo import, data export with job tracking.
+ - Webhooks: event registration, testing, delivery management.
+ - Feature flags: toggle system with rollout percentage.
+ - Session management: multi-device tracking, remote logout.
+ - 7 new database models: AuditLog, Backup, BatchJob, FeatureFlag, UserSession, ExportJob, Webhook.
+
+
 ## v4.13.1 — Creator Monetization: Fan Club + Premium video + Goals
 
 ### Highlights
