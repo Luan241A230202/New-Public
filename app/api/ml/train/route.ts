@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { modelTrainer } from '@/lib/ml/modelTrainer';
-import { auth } from '@/auth';
+import { auth } from '@/lib/auth';
 import { z } from 'zod';
 
 const trainSchema = z.object({

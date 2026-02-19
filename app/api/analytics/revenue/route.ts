@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { advancedAnalytics } from '@/lib/analytics/advanced';
-import { auth } from '@/auth';
+import { auth } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
   try {

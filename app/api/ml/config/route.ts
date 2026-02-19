@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { modelConfigManager } from '@/lib/ml/modelTrainer';
-import { auth } from '@/auth';
+import { auth } from '@/lib/auth';
 
 export async function GET() {
   try {

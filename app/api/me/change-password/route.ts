@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
-import { hash, compare } from "bcrypt";
+import { hash, compare } from "bcryptjs";
 
 const schema = z.object({
   currentPassword: z.string().min(1),

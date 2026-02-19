@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { multiRegionManager } from '@/lib/regions/manager';
-import { auth } from '@/auth';
+import { auth } from '@/lib/auth';
 
 export async function GET() {
   try {

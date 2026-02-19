@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import { auth } from '@/lib/auth';
 import { analyticsCollector } from '@/lib/analytics/apiAnalytics';
 
 function isAdmin(session: any): boolean {
