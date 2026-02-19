@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./globals-luxury.css";
 import { env, flags, isConfiguredEnv } from "@/lib/env";
 import { getRequestLanguage } from "@/lib/i18n";
 import SiteHeader from "@/components/layout/SiteHeader";
