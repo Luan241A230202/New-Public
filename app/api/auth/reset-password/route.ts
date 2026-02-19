@@ -18,7 +18,7 @@ export async function POST(req: Request) {
       where: {
         token,
         expiresAt: { gt: new Date() },
-        usedAt: null,
+        used: false,
       },
       include: {
         user: {
@@ -41,11 +41,11 @@ export async function POST(req: Request) {
     await prisma.$transaction([
       prisma.user.update({
         where: { id: resetRequest.userId },
-        data: { password: hashedPassword },
+        data: { passwordHash: hashedPassword },
       }),
       prisma.passwordReset.update({
         where: { id: resetRequest.id },
-        data: { usedAt: new Date() },
+        data: { used: true },
       }),
     ]);
 

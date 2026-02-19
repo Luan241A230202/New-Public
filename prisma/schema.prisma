@@ -246,6 +246,8 @@ model User {
   id            String   @id @default(cuid())
   name          String?
   email         String?  @unique
+  emailVerified DateTime?
+  emailVerificationToken String?
   username      String?  @unique
   passwordHash  String?
   role          Role     @default(USER)
@@ -398,6 +400,7 @@ model User {
   batchJobs     BatchJob[]
   userSessions  UserSession[]
   exportJobs    ExportJob[]
+  passwordResets PasswordReset[]
   webhooks      Webhook[]
 }
 model Notification {
@@ -2644,6 +2647,21 @@ model UserSession {
   createdAt   DateTime @default(now())
 
   @@index([userId, lastActiveAt])
+  @@index([token])
+  @@index([expiresAt])
+}
+
+// Password reset tokens
+model PasswordReset {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  used      Boolean  @default(false)
+
+  @@index([userId])
   @@index([token])
   @@index([expiresAt])
 }
