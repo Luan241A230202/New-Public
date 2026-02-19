@@ -43,8 +43,8 @@ export async function GET(
       select: {
         id: true,
         title: true,
-        thumbnail: true,
-        duration: true,
+        thumbKey: true,
+        durationSec: true,
         viewCount: true,
         createdAt: true
       }
@@ -53,7 +53,7 @@ export async function GET(
     return Response.json({
       channel: {
         ...user,
-        subscriberCount: user._count.followers,
+        subscriberCount: user._count.subscriptionsIn,
         videoCount: user._count.videos
       },
       videos
