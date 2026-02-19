@@ -15,7 +15,7 @@ const bodySchema = z.object({
 
 export async function POST(req: Request) {
   const session = await auth();
-  if (!isAdmin(session)) {
+  if (!isAdmin(session) || !session?.user) {
     return NextResponse.json({ error: "Forbidden - Admin only" }, { status: 403 });
   }
 

@@ -5,10 +5,10 @@ import { z } from "zod";
 
 const updateSchema = z.object({
   username: z.string().min(3).max(30).optional(),
-  displayName: z.string().max(100).optional(),
-  bio: z.string().max(500).optional(),
-  avatar: z.string().url().optional(),
-  banner: z.string().url().optional(),
+  name: z.string().max(100).optional(),
+  // bio: z.string().max(500).optional(),
+  image: z.string().url().optional(),
+  // banner: z.string().url().optional(),
 });
 
 export async function GET() {
@@ -27,10 +27,10 @@ export async function GET() {
         username: true,
         email: true,
         emailVerified: true,
-        displayName: true,
-        bio: true,
-        avatar: true,
-        banner: true,
+        name: true,
+        // bio: true,
+        image: true,
+        // banner: true,
         role: true,
         starBalance: true,
         createdAt: true,
@@ -39,7 +39,7 @@ export async function GET() {
             videos: true,
             likes: true,
             comments: true,
-            subscriptions: true,
+            subscriptionsIn: true,
           },
         },
       },
@@ -94,10 +94,10 @@ export async function PATCH(req: Request) {
       select: {
         id: true,
         username: true,
-        displayName: true,
-        bio: true,
-        avatar: true,
-        banner: true,
+        name: true,
+        // bio: true,
+        image: true,
+        // banner: true,
       },
     });
 

@@ -28,16 +28,16 @@ export async function GET() {
   // Database metrics
   if (prisma) {
     try {
-      const [userCount, videoCount, viewCount] = await Promise.all([
+      const [userCount, videoCount, progressCount] = await Promise.all([
         prisma.user.count(),
         prisma.video.count(),
-        prisma.view.count(),
+        prisma.videoProgress.count(),
       ]);
       
       metrics.database = {
         users: userCount,
         videos: videoCount,
-        views: viewCount,
+        videoProgress: progressCount,
       };
     } catch (error) {
       metrics.database = { error: "Failed to fetch database metrics" };

@@ -24,7 +24,7 @@ export async function POST() {
         likes: true,
         playlists: true,
         notifications: true,
-        starTransactions: true,
+        starTx: true,
         // Add other relations as needed
       },
     });

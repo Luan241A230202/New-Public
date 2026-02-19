@@ -8,7 +8,7 @@ export async function GET(
   try {
     const chapters = await prisma.videoChapter.findMany({
       where: { videoId: params.id },
-      orderBy: { timestamp: "asc" }
+      orderBy: { startSec: "asc" }
     });
 
     return Response.json({ chapters });

@@ -75,10 +75,10 @@ export async function POST(
   // Check user has enough stars
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { starsBalance: true },
+    select: { starBalance: true },
   });
 
-  if (!user || (user.starsBalance ?? 0) < totalCost) {
+  if (!user || (user.starBalance ?? 0) < totalCost) {
     return Response.json(
       { error: "Insufficient stars balance" },
       { status: 400 }
@@ -90,29 +90,31 @@ export async function POST(
     // Deduct stars from sender
     await tx.user.update({
       where: { id: userId },
-      data: { starsBalance: { decrement: totalCost } },
+      data: { starBalance: { decrement: totalCost } },
     });
 
-    // Credit stars to video creator
-    await tx.user.update({
-      where: { id: video.authorId },
-      data: { starsBalance: { increment: totalCost } },
-    });
+    // Credit stars to video creator (if exists)
+    if (video.authorId) {
+      await tx.user.update({
+        where: { id: video.authorId },
+        data: { starBalance: { increment: totalCost } },
+      });
+    }
 
-    // Create star transaction record
+    // Create star transaction record (debit from sender)
     const starTx = await tx.starTransaction.create({
       data: {
-        fromUserId: userId,
-        toUserId: video.authorId,
-        amount: totalCost,
+        userId: userId,
+        delta: -totalCost,
         type: "GIFT",
-        status: "COMPLETED",
+        stars: totalCost,
+        videoId: video.id,
+        giftId,
         note: JSON.stringify({
-          videoId: video.id,
-          giftId,
           giftName: gift.name,
           quantity,
           anonymous,
+          recipientId: video.authorId,
         }),
       },
     });

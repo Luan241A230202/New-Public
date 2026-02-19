@@ -9,27 +9,27 @@ export async function GET(req: NextRequest) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const history = await prisma.videoView.findMany({
+    const history = await prisma.videoProgress.findMany({
       where: { userId: session.user.id },
       include: {
         video: {
           select: {
             id: true,
             title: true,
-            thumbnail: true,
-            duration: true,
+            thumbKey: true,
+            durationSec: true,
             viewCount: true,
-            user: {
+            author: {
               select: {
                 username: true,
-                displayName: true,
-                avatar: true
+                name: true,
+                image: true
               }
             }
           }
         }
       },
-      orderBy: { viewedAt: "desc" },
+      orderBy: { updatedAt: "desc" },
       take: 50
     });
 
@@ -47,7 +47,7 @@ export async function DELETE(req: NextRequest) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    await prisma.videoView.deleteMany({
+    await prisma.videoProgress.deleteMany({
       where: { userId: session.user.id }
     });
 

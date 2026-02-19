@@ -1,53 +1,30 @@
-import { prisma } from "@/lib/prisma";
+import { NextResponse } from "next/server";
 
-/**
- * GET /api/live/active
- * Get all currently active live streams
- */
+// Live streaming feature not yet implemented in database schema
 export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const category = searchParams.get("category");
-  const page = parseInt(searchParams.get("page") || "1");
-  const limit = Math.min(parseInt(searchParams.get("limit") || "20"), 100);
-  const skip = (page - 1) * limit;
+  return NextResponse.json(
+    { error: "Live streaming feature not yet available" },
+    { status: 501 }
+  );
+}
 
-  const where: any = {
-    status: "LIVE",
-    endedAt: null,
-  };
+export async function POST(req: Request) {
+  return NextResponse.json(
+    { error: "Live streaming feature not yet available" },
+    { status: 501 }
+  );
+}
 
-  if (category) {
-    where.category = category;
-  }
+export async function PATCH(req: Request) {
+  return NextResponse.json(
+    { error: "Live streaming feature not yet available" },
+    { status: 501 }
+  );
+}
 
-  const [liveStreams, total] = await Promise.all([
-    prisma.liveStream.findMany({
-      where,
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            image: true,
-          },
-        },
-      },
-      orderBy: {
-        viewerCount: "desc",
-      },
-      skip,
-      take: limit,
-    }),
-    prisma.liveStream.count({ where }),
-  ]);
-
-  return Response.json({
-    liveStreams,
-    pagination: {
-      page,
-      limit,
-      total,
-      totalPages: Math.ceil(total / limit),
-    },
-  });
+export async function DELETE(req: Request) {
+  return NextResponse.json(
+    { error: "Live streaming feature not yet available" },
+    { status: 501 }
+  );
 }
