@@ -138,19 +138,21 @@ export async function POST(
     }).catch(() => {});
   }
 
-  // Grant XP to receiver
-  grantXp({
-    userId: video.authorId,
-    sourceKey: `RECEIVED_GIFT:${result.id}`,
-    amount: totalCost / 2,
-    badgeKey: "POPULAR_CREATOR",
-    badgeName: "Popular Creator",
-    badgeDescription: "Nhận quà từ fans",
-    badgeIcon: "🌟",
-    dailyKey: "GIFTS_RECEIVED",
-    dailyGoal: 10,
-    dailyInc: quantity,
-  }).catch(() => {});
+  // Grant XP to receiver (if author exists)
+  if (video.authorId) {
+    grantXp({
+      userId: video.authorId,
+      sourceKey: `RECEIVED_GIFT:${result.id}`,
+      amount: totalCost / 2,
+      badgeKey: "POPULAR_CREATOR",
+      badgeName: "Popular Creator",
+      badgeDescription: "Nhận quà từ fans",
+      badgeIcon: "🌟",
+      dailyKey: "GIFTS_RECEIVED",
+      dailyGoal: 10,
+      dailyInc: quantity,
+    }).catch(() => {});
+  }
 
   return Response.json({
     success: true,
