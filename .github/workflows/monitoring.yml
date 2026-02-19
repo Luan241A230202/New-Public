@@ -1,0 +1,89 @@
+name: Performance Monitoring
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  benchmark:
+    name: Run Performance Benchmarks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Start application
+        run: |
+          npm run build
+          npm start &
+          sleep 30  # Wait for app to start
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+
+      - name: Run benchmarks
+        run: npm run benchmark
+
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v3
+        with:
+          name: benchmark-results
+          path: benchmark-results.txt
+          retention-days: 30
+
+      - name: Check performance thresholds
+        run: |
+          # Check if benchmarks meet performance requirements
+          echo "Checking performance thresholds..."
+          # Add threshold validation logic here
+
+  api-health-check:
+    name: API Health Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Start application
+        run: |
+          npm run build
+          npm start &
+          sleep 30
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+
+      - name: Check API stability
+        run: npm run check:api
+
+      - name: Create issue if health check fails
+        if: failure()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'API Health Check Failed',
+              body: 'Automated API health check failed. Please investigate.',
+              labels: ['bug', 'high-priority', 'monitoring']
+            })

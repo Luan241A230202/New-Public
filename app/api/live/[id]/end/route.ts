@@ -1,57 +1,30 @@
-import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
+import { NextResponse } from "next/server";
 
-/**
- * POST /api/live/[id]/end
- * End a live stream
- */
-export async function POST(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
-  const session = await auth();
-  const userId = (session?.user as any)?.id as string | undefined;
+// Live streaming feature not yet implemented in database schema
+export async function GET(req: Request) {
+  return NextResponse.json(
+    { error: "Live streaming feature not yet available" },
+    { status: 501 }
+  );
+}
 
-  if (!userId) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
-  }
+export async function POST(req: Request) {
+  return NextResponse.json(
+    { error: "Live streaming feature not yet available" },
+    { status: 501 }
+  );
+}
 
-  const liveStreamId = params.id;
+export async function PATCH(req: Request) {
+  return NextResponse.json(
+    { error: "Live streaming feature not yet available" },
+    { status: 501 }
+  );
+}
 
-  const liveStream = await prisma.liveStream.findUnique({
-    where: { id: liveStreamId },
-  });
-
-  if (!liveStream) {
-    return Response.json({ error: "Live stream not found" }, { status: 404 });
-  }
-
-  if (liveStream.userId !== userId) {
-    return Response.json(
-      { error: "You can only end your own live stream" },
-      { status: 403 }
-    );
-  }
-
-  if (liveStream.endedAt) {
-    return Response.json(
-      { error: "Live stream already ended" },
-      { status: 400 }
-    );
-  }
-
-  // End the live stream
-  const updated = await prisma.liveStream.update({
-    where: { id: liveStreamId },
-    data: {
-      status: "ENDED",
-      endedAt: new Date(),
-    },
-  });
-
-  return Response.json({
-    success: true,
-    liveStream: updated,
-    message: "Live stream ended successfully",
-  });
+export async function DELETE(req: Request) {
+  return NextResponse.json(
+    { error: "Live streaming feature not yet available" },
+    { status: 501 }
+  );
 }

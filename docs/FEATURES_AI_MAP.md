@@ -1,9 +1,11 @@
-# FEATURES_AI_MAP.md — v4.16.26
+# FEATURES_AI_MAP.md — v4.16.27
 
 > Mục tiêu: giúp AI (khi mở chat mới) tìm đúng file/entrypoint nhanh nhất.
 > File này map theo **code hiện có** trong repo (không phải wishlist).
 
-**Current version:** v4.16.26
+**Current version:** v4.16.27
+
+**Platform Statistics**: 364+ HTTP method endpoints across 272 route files ✅
 
 ---
 
@@ -95,6 +97,29 @@
 - Weekly digest:
   - worker: `worker/src/jobs/notifications/weeklyDigest.ts`
   - email helper: `worker/src/email/resend.ts`
+
+### Infrastructure APIs (v4.16.27)
+- Rate limiting:
+  - APIs: `app/api/rate-limits/*`
+- System monitoring:
+  - APIs: `app/api/system/*` (health, metrics)
+  - Health UI: `/api/verify/status` + `/verify`
+- Backup & restore:
+  - APIs: `app/api/backup/*`
+- Audit & compliance:
+  - APIs: `app/api/audit/*`, `app/api/gdpr/*`
+- Cache management:
+  - APIs: `app/api/cache/*`
+- Batch operations:
+  - APIs: `app/api/batch/*`
+- Import/export:
+  - APIs: `app/api/import/*`, `app/api/export/*`
+- Webhooks:
+  - APIs: `app/api/webhooks/register`, `app/api/webhooks/list`, `app/api/webhooks/test`
+- Feature flags:
+  - APIs: `app/api/features/*`
+- Session management:
+  - APIs: `app/api/sessions/*`
 
 ---
 

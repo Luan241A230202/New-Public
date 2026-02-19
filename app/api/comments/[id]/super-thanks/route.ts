@@ -60,10 +60,10 @@ export async function POST(
   // Check user has enough stars
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { starsBalance: true },
+    select: { starBalance: true },
   });
 
-  if (!user || (user.starsBalance ?? 0) < stars) {
+  if (!user || (user.starBalance ?? 0) < stars) {
     return Response.json(
       { error: "Insufficient stars balance" },
       { status: 400 }
@@ -75,29 +75,29 @@ export async function POST(
     // Deduct stars from sender
     await tx.user.update({
       where: { id: userId },
-      data: { starsBalance: { decrement: stars } },
+      data: { starBalance: { decrement: stars } },
     });
 
     // Credit stars to comment author (if exists and not anonymous)
     if (comment.userId) {
       await tx.user.update({
         where: { id: comment.userId },
-        data: { starsBalance: { increment: stars } },
+        data: { starBalance: { increment: stars } },
       });
     }
 
-    // Create star transaction record
+    // Create star transaction record (debit from sender)
     const starTx = await tx.starTransaction.create({
       data: {
-        fromUserId: userId,
-        toUserId: comment.userId ?? null,
-        amount: stars,
-        type: "SUPER_THANKS",
-        status: "COMPLETED",
+        userId: userId,
+        delta: -stars, // Negative for spending
+        type: "STARS",
+        stars: stars,
         note: JSON.stringify({
           commentId: comment.id,
           videoId: comment.videoId,
           anonymous,
+          action: "SUPER_THANKS"
         }),
       },
     });
@@ -108,8 +108,6 @@ export async function POST(
       data: {
         isSuperThanks: true,
         superThanksStars: { increment: stars },
-        superThanksQty: { increment: 1 },
-        starTxId: starTx.id,
       },
       include: {
         user: { select: { id: true, name: true } },
@@ -126,7 +124,7 @@ export async function POST(
         badgeName: "Generous Supporter",
         badgeDescription: "Tặng Super Thanks lần đầu",
         badgeIcon: "⭐",
-        dailyKey: "SUPER_THANKS",
+        dailyKey: "STARS",
         dailyGoal: 1,
         dailyInc: 1,
       }).catch(() => {});

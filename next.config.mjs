@@ -11,6 +11,11 @@ const r2Host = safeUrlHost(process.env.R2_PUBLIC_BASE_URL || "");
 
 const nextConfig = {
   reactStrictMode: true,
+  experimental: {
+    turbo: {
+      root: './'
+    }
+  },
   images: {
     remotePatterns: [
       ...(r2Host

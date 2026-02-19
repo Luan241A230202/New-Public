@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
-import { hash, compare } from "bcrypt";
+import { hash, compare } from "bcryptjs";
 
 const schema = z.object({
   currentPassword: z.string().min(1),
@@ -24,10 +24,10 @@ export async function POST(req: Request) {
     // Get current password
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { password: true },
+      select: { passwordHash: true },
     });
 
-    if (!user || !user.password) {
+    if (!user || !user.passwordHash) {
       return NextResponse.json(
         { error: "User not found" },
         { status: 404 }
@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     }
 
     // Verify current password
-    const isValid = await compare(currentPassword, user.password);
+    const isValid = await compare(currentPassword, user.passwordHash);
     if (!isValid) {
       return NextResponse.json(
         { error: "Current password is incorrect" },
@@ -49,7 +49,7 @@ export async function POST(req: Request) {
     // Update password
     await prisma.user.update({
       where: { id: userId },
-      data: { password: hashedPassword },
+      data: { passwordHash: hashedPassword },
     });
 
     return NextResponse.json({

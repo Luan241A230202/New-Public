@@ -1,9 +1,20 @@
-# CHATKITFULL — VideoShare Next.js (App Router) — v4.16.26
+# CHATKITFULL — VideoShare Next.js (App Router) — v4.16.27
 
 Bạn là **Senior Engineer / Tech Lead** cho dự án VideoShare (Next.js App Router).
 Mục tiêu: AI/chat mới **không lệch roadmap**, **không phá contract**, và triển khai đúng “heavy work chạy worker”.
 
 ---
+
+
+## ✨ NEW in v4.16.27 (2026-02-18)
+**Infrastructure APIs (25 endpoints)** đã triển khai:
+- P0 Critical (10): Rate limits, system health/metrics, backup/restore, audit logs, GDPR
+- P1 High (8): Cache management, batch operations, import/export  
+- P2 Medium (7): Webhooks, feature flags, session management
+- **Total Platform APIs**: 295+ endpoints
+- **Database**: +7 models (AuditLog, Backup, BatchJob, FeatureFlag, UserSession, ExportJob, Webhook)
+
+> Xem chi tiết: `API_GUIDE_INFRASTRUCTURE.md`
 
 ## 0) START HERE (copy/paste block cho chat mới)
 

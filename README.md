@@ -1,7 +1,8 @@
-# VideoShare Next.js (App Router) — v4.16.26
+# VideoShare Next.js (App Router) — v4.16.27
 
-## Current status (v4.16.26)
+## Current status (v4.16.27)
 
+- **Infrastructure APIs (NEW v4.16.27)**: 25 production-ready endpoints for system monitoring, backup, audit, batch operations, GDPR compliance, webhooks, and feature flags.
 - Storage redundancy (R2 primary + optional FTP Origin/HLS + Google Drive origin) with **24h delayed apply** and audit feed.
 - Admin HLS packaging modes: **TS**, **fMP4**, **Hybrid**.
 - Player roadmap Phase 1–2: hls.js playback with origin failover (R2 A/B + FTP), quality selector, stats overlay; Phase 2 cache headers + manifest rewrite + prefetch.
@@ -48,7 +49,31 @@ Khi mở chat mới hoặc cập nhật dự án, đọc theo thứ tự (có b�
 - Similar: `lib/videos/similar.ts` + `lib/videos/similarCache.ts`
 - Worker/Queues (payments) + Redis keys contracts phải giữ nguyên.
 
-## What’s new (v4.16.x → v4.16.26)
+## What's new (v4.16.x → v4.16.27)
+
+### Infrastructure APIs (v4.16.27) ✨ NEW
+**25 production-ready endpoints** cho system ops, monitoring, compliance:
+
+**P0 Critical (10 APIs)**:
+- Rate Limits: `GET /api/rate-limits/status`, `POST /api/rate-limits/reset` (admin)
+- System Health: `GET /api/system/health`, `GET /api/system/metrics` (admin)
+- Backup & Restore: `POST /api/backup/create`, `GET /api/backup/list`, `POST /api/backup/restore` (admin)
+- Audit & GDPR: `GET /api/audit/logs`, `POST /api/audit/export` (admin), `POST /api/gdpr/export-data`
+
+**P1 High Priority (8 APIs)**:
+- Cache: `POST /api/cache/clear` (admin), `GET /api/cache/stats` (admin)
+- Batch Ops: `POST /api/batch/videos/update`, `POST /api/batch/users/action`, `GET /api/batch/status` (admin)
+- Import/Export: `POST /api/import/videos`, `POST /api/export/data`, `GET /api/export/status`
+
+**P2 Medium Priority (7 APIs)**:
+- Webhooks: `POST /api/webhooks/register`, `GET /api/webhooks/list`, `POST /api/webhooks/test`
+- Feature Flags: `GET /api/features/list`, `POST /api/features/toggle` (admin)
+- Sessions: `GET /api/sessions/list`, `DELETE /api/sessions/[id]`
+
+**Database Models**: 7 new models (AuditLog, Backup, BatchJob, FeatureFlag, UserSession, ExportJob, Webhook)
+
+> Chi tiết xem `MISSING-APIS-IMPLEMENTATION.md` và `API-COMPLETENESS-AUDIT.md`
+
 ### Storage redundancy + tự phục hồi HLS (v4.16.6+)
 - **R2 primary** + tuỳ chọn **FTP Origin (MP4 gốc)** + **FTP HLS (mirror HLS + fallback playback)**.
 - **Google Drive origin** (Service Account JSON): deep backup để **rebuild HLS** nếu R2 + FTP HLS đều hỏng.

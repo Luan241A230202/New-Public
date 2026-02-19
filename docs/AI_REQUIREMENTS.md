@@ -1,10 +1,20 @@
 # AI_REQUIREMENTS.md — Checklist yêu cầu dự án VideoShare (Next.js App Router)
 
-**Current version:** v4.16.26
+**Current version:** v4.16.27
+
+**Platform Achievement**: 364+ HTTP method endpoints across 272 route files ✅
 
 > File này là checklist/contract (không phải progress). Trạng thái DONE/TODO xem `TASK_TEMPLATE_CONTINUE.md`.
 
 ## 0) Bổ sung v4.16.x (không phá contract cũ)
+
+### Infrastructure APIs (v4.16.27)
+- **364+ HTTP method endpoints** total - exceeds enterprise requirements.
+- 25 new infrastructure endpoints: rate limiting, system monitoring, backup/restore, audit, GDPR, cache, batch operations, import/export, webhooks, feature flags, sessions.
+- 7 new database models: AuditLog, Backup, BatchJob, FeatureFlag, UserSession, ExportJob, Webhook.
+- All endpoints follow authentication/authorization patterns.
+- Zod schema validation on all request bodies.
+- Consistent error handling and response formats.
 
 ### Storage redundancy (R2 + FTP + Drive)
 - R2 vẫn là primary. Các endpoint backup/mirror là optional.

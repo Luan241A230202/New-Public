@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { prisma } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 
 export async function GET(
   req: NextRequest,
@@ -16,14 +16,13 @@ export async function GET(
       select: {
         id: true,
         username: true,
-        displayName: true,
-        avatar: true,
-        bio: true,
+        name: true,
+        image: true,
         createdAt: true,
         _count: {
           select: {
             videos: { where: { status: "PUBLISHED" } },
-            followers: true
+            subscriptionsIn: true
           }
         }
       }
@@ -36,7 +35,7 @@ export async function GET(
     // Get channel videos
     const videos = await prisma.video.findMany({
       where: {
-        userId: user.id,
+        authorId: user.id,
         status: "PUBLISHED"
       },
       take: 20,
@@ -44,8 +43,8 @@ export async function GET(
       select: {
         id: true,
         title: true,
-        thumbnail: true,
-        duration: true,
+        thumbKey: true,
+        durationSec: true,
         viewCount: true,
         createdAt: true
       }
@@ -54,7 +53,7 @@ export async function GET(
     return Response.json({
       channel: {
         ...user,
-        subscriberCount: user._count.followers,
+        subscriberCount: user._count.subscriptionsIn,
         videoCount: user._count.videos
       },
       videos

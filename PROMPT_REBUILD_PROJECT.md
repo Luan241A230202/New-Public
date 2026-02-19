@@ -1,6 +1,13 @@
-Current Version: 4.16.25
+Current Version: 4.16.27
 
 ## v4.16.x additions (Storage + HLS + Trust & Safety)
+
+## v4.16.27 additions (Infrastructure APIs - 364+ total endpoints)
+- **Platform achievement**: 364+ HTTP method endpoints across 272 route files.
+- Infrastructure APIs (25 new): rate limiting (/api/rate-limits/*), system monitoring (/api/system/*), backup/restore (/api/backup/*), audit logs (/api/audit/*), GDPR export (/api/gdpr/*), cache management (/api/cache/*), batch operations (/api/batch/*), import/export (/api/import/*, /api/export/*), webhooks (/api/webhooks/register|list|test), feature flags (/api/features/*), session management (/api/sessions/*).
+- 7 new database models: AuditLog, Backup, BatchJob, FeatureFlag, UserSession, ExportJob, Webhook.
+- All infrastructure endpoints follow auth/admin patterns with Zod validation.
+
 - Storage redundancy: Admin `/admin/storage` (verify + test upload + pending apply 24h + audit) + worker queue `storage` (apply_pending_config, health_scan, backup_origin, mirror_hls, rebuild_hls_from_drive).
 - HLS packaging: Admin `/admin/hls` chọn TS / fMP4 / Hybrid; worker `encodeHls` sinh output immutable theo encodeId.
 - Trust & Safety: moderation escalation scan (auto mute/ban) chạy best-effort trong repeatable `payments:alert_cron` + weekly digest in-app + optional email (Resend).
@@ -23,7 +30,7 @@ Current Version: 4.16.25
 
 > Dùng file này làm **prompt gốc** khi mở chat mới để AI có thể **rebuild toàn bộ dự án VideoShare Next.js từ đầu** đúng stack/contract.
 
-**Target version:** v4.16.26
+**Target version:** v4.16.27
 
 ---
 

@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
-import { prisma } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 
 export async function GET(req: NextRequest) {
   try {
@@ -9,22 +9,22 @@ export async function GET(req: NextRequest) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const watchLater = await prisma.watchLater.findMany({
+    const watchLater = await prisma.watchLaterItem.findMany({
       where: { userId: session.user.id },
       include: {
         video: {
           select: {
             id: true,
             title: true,
-            thumbnail: true,
-            duration: true,
+            thumbKey: true,
+            durationSec: true,
             viewCount: true,
             createdAt: true,
-            user: {
+            author: {
               select: {
                 username: true,
-                displayName: true,
-                avatar: true
+                name: true,
+                image: true
               }
             }
           }
@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
 
     const { videoId } = await req.json();
 
-    const watchLater = await prisma.watchLater.create({
+    const watchLater = await prisma.watchLaterItem.create({
       data: {
         userId: session.user.id,
         videoId
@@ -77,7 +77,7 @@ export async function DELETE(req: NextRequest) {
       return Response.json({ error: "Video ID required" }, { status: 400 });
     }
 
-    await prisma.watchLater.deleteMany({
+    await prisma.watchLaterItem.deleteMany({
       where: {
         userId: session.user.id,
         videoId

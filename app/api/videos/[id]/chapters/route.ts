@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { prisma } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 
 export async function GET(
   req: NextRequest,
@@ -8,7 +8,7 @@ export async function GET(
   try {
     const chapters = await prisma.videoChapter.findMany({
       where: { videoId: params.id },
-      orderBy: { timestamp: "asc" }
+      orderBy: { startSec: "asc" }
     });
 
     return Response.json({ chapters });

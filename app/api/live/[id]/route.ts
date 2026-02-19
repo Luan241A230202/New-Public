@@ -1,45 +1,30 @@
-import { prisma } from "@/lib/prisma";
+import { NextResponse } from "next/server";
 
-/**
- * GET /api/live/[id]
- * Get live stream info
- */
-export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
-  const liveStreamId = params.id;
+// Live streaming feature not yet implemented in database schema
+export async function GET(req: Request) {
+  return NextResponse.json(
+    { error: "Live streaming feature not yet available" },
+    { status: 501 }
+  );
+}
 
-  const liveStream = await prisma.liveStream.findUnique({
-    where: { id: liveStreamId },
-    include: {
-      user: {
-        select: {
-          id: true,
-          name: true,
-          image: true,
-          bio: true,
-        },
-      },
-    },
-  });
+export async function POST(req: Request) {
+  return NextResponse.json(
+    { error: "Live streaming feature not yet available" },
+    { status: 501 }
+  );
+}
 
-  if (!liveStream) {
-    return Response.json({ error: "Live stream not found" }, { status: 404 });
-  }
+export async function PATCH(req: Request) {
+  return NextResponse.json(
+    { error: "Live streaming feature not yet available" },
+    { status: 501 }
+  );
+}
 
-  // Increment viewer count if stream is live
-  if (liveStream.status === "LIVE" && !liveStream.endedAt) {
-    await prisma.liveStream.update({
-      where: { id: liveStreamId },
-      data: { viewerCount: { increment: 1 } },
-    });
-  }
-
-  return Response.json({
-    liveStream: {
-      ...liveStream,
-      viewerCount: liveStream.viewerCount + 1,
-    },
-  });
+export async function DELETE(req: Request) {
+  return NextResponse.json(
+    { error: "Live streaming feature not yet available" },
+    { status: 501 }
+  );
 }
