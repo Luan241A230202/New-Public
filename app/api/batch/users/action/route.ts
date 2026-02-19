@@ -12,7 +12,7 @@ const bodySchema = z.object({
 
 export async function POST(req: Request) {
   const session = await auth();
-  if (!isAdmin(session)) {
+  if (!isAdmin(session) || !session?.user) {
     return NextResponse.json({ error: "Forbidden - Admin only" }, { status: 403 });
   }
 
@@ -79,8 +79,8 @@ export async function POST(req: Request) {
         // Create moderation action record
         await prisma.moderationAction.create({
           data: {
-            actorId: (session.user as any).id,
-            targetId: userId,
+            actorUserId: (session.user as any).id,
+            targetUserId: userId,
             type: moderationTypeMap[parsed.data.action] || "STRIKE_USER",
             reason: parsed.data.reason || "Batch action",
           },

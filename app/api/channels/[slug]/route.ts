@@ -16,14 +16,13 @@ export async function GET(
       select: {
         id: true,
         username: true,
-        displayName: true,
-        avatar: true,
-        bio: true,
+        name: true,
+        image: true,
         createdAt: true,
         _count: {
           select: {
             videos: { where: { status: "PUBLISHED" } },
-            followers: true
+            subscriptionsIn: true
           }
         }
       }
@@ -36,7 +35,7 @@ export async function GET(
     // Get channel videos
     const videos = await prisma.video.findMany({
       where: {
-        userId: user.id,
+        authorId: user.id,
         status: "PUBLISHED"
       },
       take: 20,
