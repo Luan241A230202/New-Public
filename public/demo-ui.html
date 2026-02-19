@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise API Platform - Luxury Purple & Black Theme</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --purple-500: #A855F7;
+            --purple-600: #9333EA;
+            --purple-700: #7E22CE;
+            --purple-300: #C084FC;
+            --purple-100: #E9D5FF;
+            --black-900: #0A0A0A;
+            --black-800: #1A1A1A;
+            --black-700: #2D2D2D;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+            background: var(--black-900);
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--black-900) 0%, var(--black-800) 100%);
+            border-bottom: 1px solid rgba(168, 85, 247, 0.2);
+            padding: 1.5rem 0;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--purple-500) 0%, var(--purple-300) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .nav a:hover {
+            color: var(--purple-300);
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            padding: 6rem 0;
+            background: radial-gradient(ellipse at top, rgba(168, 85, 247, 0.15) 0%, transparent 60%),
+                        radial-gradient(ellipse at bottom, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, transparent 0%, var(--black-900) 100%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 2rem;
+            color: var(--purple-300);
+            font-size: 0.875rem;
+            margin-bottom: 1.5rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffffff 0%, var(--purple-300) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--purple-600) 0%, var(--purple-700) 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
+            margin: 0 0.5rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 40px rgba(168, 85, 247, 0.5);
+        }
+
+        .btn-ghost {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: transparent;
+            color: var(--purple-300);
+            text-decoration: none;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 0 0.5rem;
+        }
+
+        .btn-ghost:hover {
+            background: rgba(168, 85, 247, 0.1);
+            border-color: var(--purple-500);
+        }
+
+        /* Stats Grid */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            padding: 4rem 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--black-800) 0%, var(--black-700) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--purple-500);
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.2);
+        }
+
+        .stat-card h3 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--purple-500) 0%, var(--purple-300) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-card p {
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 0.5rem;
+        }
+
+        /* Categories */
+        .section {
+            padding: 4rem 0;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #ffffff 0%, var(--purple-300) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .card {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.05) 0%, rgba(168, 85, 247, 0.02) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 1rem;
+            padding: 2rem;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--purple-500);
+            box-shadow: 0 10px 40px rgba(168, 85, 247, 0.3);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--purple-300);
+        }
+
+        .card p {
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 1rem;
+        }
+
+        .card-count {
+            color: var(--purple-500);
+            font-weight: 600;
+        }
+
+        /* Code Example */
+        .code-section {
+            background: var(--black-800);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .code-header {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        pre {
+            background: var(--black-900);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            border: 1px solid rgba(168, 85, 247, 0.1);
+        }
+
+        code {
+            color: var(--purple-300);
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.875rem;
+        }
+
+        /* Status */
+        .status-bar {
+            background: var(--black-800);
+            border-top: 1px solid rgba(168, 85, 247, 0.2);
+            padding: 2rem 0;
+            margin-top: 4rem;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: #10B981;
+            border-radius: 50%;
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .status-label {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .status-value {
+            color: #10B981;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">🎬 VideoShare API</div>
+                <nav class="nav">
+                    <a href="#docs">Documentation</a>
+                    <a href="#endpoints">Endpoints</a>
+                    <a href="#pricing">Pricing</a>
+                    <a href="#support">Support</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <span class="badge">✨ v4.16.28 • 398+ Endpoints • Production Ready</span>
+                <h1>Enterprise API Platform</h1>
+                <p>Build powerful video platforms with our luxury API. ML-powered recommendations, real-time streaming, and enterprise-grade infrastructure.</p>
+                <div>
+                    <a href="#docs" class="btn-primary">View Documentation</a>
+                    <a href="#endpoints" class="btn-ghost">Browse Endpoints</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="stats container">
+        <div class="stat-card">
+            <h3>398+</h3>
+            <p>HTTP Endpoints</p>
+        </div>
+        <div class="stat-card">
+            <h3>275+</h3>
+            <p>Route Files</p>
+        </div>
+        <div class="stat-card">
+            <h3>99.9%</h3>
+            <p>Uptime SLA</p>
+        </div>
+        <div class="stat-card">
+            <h3>&lt;50ms</h3>
+            <p>Avg Response</p>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="section container">
+        <h2 class="section-title">API Categories</h2>
+        <div class="grid">
+            <div class="card">
+                <div class="card-icon">🔐</div>
+                <h3>Authentication & Users</h3>
+                <p>Complete auth system with JWT, OAuth, and session management</p>
+                <span class="card-count">40 endpoints</span>
+            </div>
+            <div class="card">
+                <div class="card-icon">🎬</div>
+                <h3>Video Management</h3>
+                <p>Upload, stream, transcode, and manage video content</p>
+                <span class="card-count">75 endpoints</span>
+            </div>
+            <div class="card">
+                <div class="card-icon">💎</div>
+                <h3>Payment & NFT</h3>
+                <p>Monetization with Stripe, crypto, and NFT support</p>
+                <span class="card-count">35 endpoints</span>
+            </div>
+            <div class="card">
+                <div class="card-icon">🤖</div>
+                <h3>ML/AI & Analytics</h3>
+                <p>Machine learning recommendations and advanced analytics</p>
+                <span class="card-count">20 endpoints</span>
+            </div>
+            <div class="card">
+                <div class="card-icon">⚙️</div>
+                <h3>Infrastructure</h3>
+                <p>Backup, audit, caching, and system management</p>
+                <span class="card-count">30 endpoints</span>
+            </div>
+            <div class="card">
+                <div class="card-icon">⚡</div>
+                <h3>Real-time & CDN</h3>
+                <p>WebSocket events, CDN management, and live streaming</p>
+                <span class="card-count">15 endpoints</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Code Example -->
+    <section class="section container">
+        <h2 class="section-title">Quick Start</h2>
+        <div class="code-section">
+            <div class="code-header">JavaScript / Node.js</div>
+            <pre><code>import { VideoShareAPI } from '@videoshare/api-client';
+
+const api = new VideoShareAPI({
+  apiKey: process.env.VIDEOSHARE_API_KEY
+});
+
+// Get trending videos
+const trending = await api.videos.trending({ limit: 10 });
+
+// Get ML recommendations
+const recommendations = await api.ml.recommendations({
+  userId: 'user-123',
+  type: 'personalized'
+});</code></pre>
+        </div>
+    </section>
+
+    <!-- Status Bar -->
+    <footer class="status-bar">
+        <div class="container">
+            <div class="status-grid">
+                <div class="status-item">
+                    <span class="status-dot"></span>
+                    <span class="status-label">API Gateway:</span>
+                    <span class="status-value">Online</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-dot"></span>
+                    <span class="status-label">Database:</span>
+                    <span class="status-value">Online</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-dot"></span>
+                    <span class="status-label">CDN:</span>
+                    <span class="status-value">Online</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-dot"></span>
+                    <span class="status-label">WebSocket:</span>
+                    <span class="status-value">Online</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
